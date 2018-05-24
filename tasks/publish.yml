@@ -1,0 +1,19 @@
+---
+platform: linux
+
+params:
+  env: dev
+  github_private_key: No Private Key!
+  github_host: github.com
+  git_user: CI Bot
+  git_email: concourse@opengood.io
+  artifact_repo_uri: https://oss.sonatype.org/content/repositories/snapshots/
+  artifact_repo_id: snapshots
+
+inputs:
+- name: shared-pipeline
+- name: custom-pipeline
+- name: source-code
+
+run:
+  path: shared-pipeline/tasks/publish.sh

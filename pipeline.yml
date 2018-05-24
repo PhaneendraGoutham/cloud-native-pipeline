@@ -1,0 +1,85 @@
+jobs:
+- name: run-tests
+  plan:
+  - get: shared-pipeline
+  - get: custom-pipeline
+  - get: source
+    trigger: true
+  - get: cloud-native-image
+  - task: run-all-tests
+    image: cloud-native-image
+    file: shared-pipeline/ci/tasks/run-tests.yml
+
+- name: publish
+  plan:
+  - get: shared-pipeline
+  - get: custom-pipeline
+  - get: source
+    trigger: true
+    passed: [run-tests]
+  - get: cloud-native-image
+  - task: publish
+    image: cloud-native-image
+    file: shared-pipeline/ci/tasks/run-tests.yml
+    params:
+      github_private_key: ((project-git-repo-private-key))
+
+- name: deploy-blue
+  plan:
+  - get: shared-pipeline
+  - get: custom-pipeline
+  - get: source
+    trigger: true
+    passed: [publish]
+  - task: deploy-blue
+    image: cf-cli-image
+    config:
+      platform: linux
+      inputs:
+        - name: source-code
+      outputs:
+        - name: build
+      run:
+        path: source-code/ci/tasks/deploy-to-pcf.sh
+      params:
+        artifact_repo_uri:
+        pcf_app_name: sample-cloud-native-app
+
+resources:
+- name: shared-pipeline
+  type: git
+  source:
+    uri: ((shared-pipeline-git-repo-uri))
+    branch: ((shared-pipeline-git-repo-branch))
+    check: true
+    ignore_paths: [README.md]
+    private_key: ((shared-pipeline-git-repo-private-key))
+
+- name: custom-pipeline
+  type: git
+  source:
+    uri: ((project-git-repo-uri))
+    branch: ((project-git-repo-branch))
+    check: true
+    paths: [ci/*]
+    ignore_paths: [gradle.properties, README.md]
+    private_key: ((project-git-repo-private-key))
+
+- name: source
+  type: git
+  source:
+    uri: ((project-git-repo-uri))
+    branch: ((project-git-repo-branch))
+    check: true
+    ignore_paths: [ci/*, gradle.properties, README.md]
+    private_key: ((project-git-repo-private-key))
+
+- name: cloud-native-image
+  type: docker-image
+  source:
+    repository: opengoodio/cloud-native-kotlin-java-jdk-8-gradle
+
+- name: cf-cli-image
+  type: docker-image
+  source:
+    repository: opengoodio/cloud-native-cf-cli

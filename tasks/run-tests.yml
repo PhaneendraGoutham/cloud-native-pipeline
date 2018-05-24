@@ -1,0 +1,10 @@
+---
+platform: linux
+
+inputs:
+- name: shared-pipeline
+- name: custom-pipeline
+- name: source
+
+run:
+  path: shared-pipeline/tasks/run-tests.sh

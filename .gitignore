@@ -1,0 +1,19 @@
+### macOS ###
+.DS_Store
+
+### IntelliJ IDEA ###
+*.iml
+*.ipr
+*.iws
+.idea
+generated/
+generated_test/
+
+### Gradle ###
+.gradle
+build/
+out/
+!gradle/wrapper/gradle-wrapper.jar
+
+### Credentials ###
+credentials.yml

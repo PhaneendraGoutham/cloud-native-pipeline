@@ -1,0 +1,2 @@
+shared-pipeline-git-repo-uri: git@github.com:opengood-io/sample-cloud-native-app.git
+shared-pipeline-git-repo-branch: master
