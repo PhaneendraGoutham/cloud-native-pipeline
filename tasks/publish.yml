@@ -3,7 +3,7 @@ platform: linux
 
 params:
   env: dev
-  github_private_key: No Private Key!
+  github_private_key: No Private Key
   github_host: github.com
   git_user: CI Bot
   git_email: concourse@opengood.io

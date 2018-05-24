@@ -2,13 +2,14 @@
 platform: linux
 
 params:
-  env: dev
-  github_private_key: No Private Key!
-  github_host: github.com
-  git_user: CI Bot
-  git_email: concourse@opengood.io
   artifact_repo_uri: https://oss.sonatype.org/content/repositories/snapshots/
-  artifact_repo_id: snapshots
+  pcf_app_name: No PCF App Name
+  pcf_api_endpoint: https://api.sys.cfapps.io
+  pcf_org_name: No PCF Org Name
+  pcf_space_name: No PCF Space Name
+  pcf_username: No PCF Username
+  pcf_password: No PCF Password
+  create_pcf_services_task_script: no-script.sh
 
 inputs:
 - name: shared-pipeline
@@ -16,4 +17,4 @@ inputs:
 - name: source-code
 
 run:
-  path: shared-pipeline/tasks/publish.sh
+  path: shared-pipeline/tasks/deploy-blue.sh
