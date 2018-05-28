@@ -94,6 +94,49 @@ echo ""
 has_pcf=`echo $(to_upper_case "${has_pcf}")`
 
 if [ "${has_pcf}" == "Y" ] ; then
+    echo -e "Does your cloud-native project share a previously set up PCF API endpoint, organization, and space?"
+    echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+    read has_pcf_api_org_space
+    echo ""
+
+    has_pcf_api_org_space=`echo $(to_upper_case "${has_pcf_api_org_space}")`
+
+    if [ "${has_pcf_api_org_space}" == "N" ] ; then
+        echo -e "Enter value for ${cyan_color}'pcfApiEndpoint' (default: ${default_pcf_api_endpoint})${no_color}, followed by [ENTER]:"
+        read pcf_api_endpoint
+        echo ""
+
+        if [ "${pcf_api_endpoint}" == "" ] ; then
+            pcf_api_endpoint=${default_pcf_api_endpoint}
+        fi
+
+        echo -e "Enter value for ${cyan_color}'pcfOrg' (default: ${default_pcf_org_name})${no_color}, followed by [ENTER]:"
+        read pcf_org_name
+        echo ""
+
+        if [ "${pcf_org_name}" == "" ] ; then
+            pcf_org_name=${default_pcf_org_name}
+        fi
+
+        pcf_org_name=$(to_lower_case ${pcf_org_name})
+        pcf_org_name=$(replace_special_chars_with_dash ${pcf_org_name})
+
+        echo -e "Enter value for ${cyan_color}'pcfSpace' (default: ${default_pcf_space_name})${no_color}, followed by [ENTER]:"
+        read pcf_space_name
+        echo ""
+
+        if [ "${pcf_space_name}" == "" ] ; then
+            pcf_space_name=${default_pcf_space_name}
+        fi
+
+        pcf_space_name=$(to_lower_case ${pcf_space_name})
+        pcf_space_name=$(replace_special_chars_with_dash ${pcf_space_name})
+    else
+        pcf_api_endpoint=""
+        pcf_org_name=""
+        pcf_space_name=""
+    fi
+
     echo -e "Does your cloud-native project share previously set up PCF credentials?"
     echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
     read has_pcf_creds
@@ -125,55 +168,12 @@ if [ "${has_pcf}" == "Y" ] ; then
         pcf_username=""
         pcf_password=""
     fi
-
-    echo -e "Does your cloud-native project share a previously set up PCF API endpoint, organization, and space?"
-    echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
-    read has_pcf_api_org_space
-    echo ""
-
-    has_pcf_api_org_space=`echo $(to_upper_case "${has_pcf_api_org_space}")`
-
-    if [ "${has_pcf_api_org_space}" == "N" ] ; then
-        echo -e "Enter value for ${cyan_color}'pcfApiEndpoint' (default: ${default_pcf_api_endpoint})${no_color}, followed by [ENTER]:"
-        read pcf_api_endpoint
-        echo ""
-
-        if [ "${pcf_api_endpoint}" == "" ] ; then
-            pcf_api_endpoint=${default_pcf_api_endpoint}
-        fi
-
-        echo -e "Enter value for ${cyan_color}'pcfOrg' (default: ${default_pcf_org})${no_color}, followed by [ENTER]:"
-        read pcf_org
-        echo ""
-
-        if [ "${pcf_org}" == "" ] ; then
-            pcf_org=${default_pcf_org}
-        fi
-
-        pcf_org=$(to_lower_case ${pcf_org})
-        pcf_org=$(replace_special_chars_with_dash ${pcf_org})
-
-        echo -e "Enter value for ${cyan_color}'pcfSpace' (default: ${default_pcf_space})${no_color}, followed by [ENTER]:"
-        read pcf_space
-        echo ""
-
-        if [ "${pcf_space}" == "" ] ; then
-            pcf_space=${default_pcf_space}
-        fi
-
-        pcf_space=$(to_lower_case ${pcf_space})
-        pcf_space=$(replace_special_chars_with_dash ${pcf_space})
-    else
-        pcf_api_endpoint=""
-        pcf_org=""
-        pcf_space=""
-    fi
 else
+    pcf_api_endpoint=""
+    pcf_org_name=""
+    pcf_space_name=""
     pcf_username=""
     pcf_password=""
-    pcf_api_endpoint=""
-    pcf_org=""
-    pcf_space=""
 fi
 
 echo -e "Does your cloud-native project have a database?"
@@ -260,11 +260,11 @@ echo -e "${cyan_color}Pipeline creds storage: $(get_pipeline_creds_storage ${pip
 echo -e "${cyan_color}Concourse CI team name: ${concourse_team_name}${no_color}"
 echo -e "${cyan_color}       Docker username: ${docker_username}${no_color}"
 echo -e "${cyan_color}       Docker password: $(mask_string ${docker_password})${no_color}"
+echo -e "${cyan_color}      PCF API endpoint: ${pcf_api_endpoint}${no_color}"
+echo -e "${cyan_color} PCF organization name: ${pcf_org_name}${no_color}"
+echo -e "${cyan_color}        PCF space name: ${pcf_space_name}${no_color}"
 echo -e "${cyan_color}          PCF username: ${pcf_username}${no_color}"
 echo -e "${cyan_color}          PCF password: $(mask_string ${pcf_password})${no_color}"
-echo -e "${cyan_color}      PCF API endpoint: ${pcf_api_endpoint}${no_color}"
-echo -e "${cyan_color}      PCF organization: ${pcf_org}${no_color}"
-echo -e "${cyan_color}             PCF space: ${pcf_space}${no_color}"
 echo -e "${cyan_color}           DB username: ${db_username}${no_color}"
 echo -e "${cyan_color}           DB password: $(mask_string ${db_password})${no_color}"
 echo -e "${cyan_color}          GitHub email: ${github_email}${no_color}"
@@ -285,7 +285,7 @@ if [ "${github_email}" != "" ] ; then
     ssh-add -k ${ssh_private_key_file}
 
     while IFS='' read -r line || [[ -n "$line" ]]; do
-        private_key="${private_key}  $line\n"
+        project_git_repo_private_key="${project_git_repo_private_key}  $line\n"
     done < ${ssh_private_key_file}
 
     echo -e "${green_color}Done!${no_color}"
@@ -301,19 +301,19 @@ if [ "${pipeline_creds_storage_option}" == "V" ] ; then
         echo ""
     fi
 
-    if [ "${pcf_username}" != "" ] && [ "${pcf_password}" != "" ] ; then
-        echo -e "${cyan_color}Storing PCF shared credentials into Vault for Concourse CI pipeline...${no_color}"
-        vault write concourse/${concourse_team_name}/pcf-username value=${pcf_username}
-        vault write concourse/${concourse_team_name}/pcf-password value=${pcf_password}
+    if [ "${pcf_api_endpoint}" != "" ] && [ "${pcf_org_name}" != "" ] && [ "${pcf_space_name}" != "" ] ; then
+        echo -e "${cyan_color}Storing PCF shared API endpoint, organization, and space into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/pcf-api-endpoint value=${pcf_api_endpoint}
+        vault write concourse/${concourse_team_name}/pcf-org-name value=${pcf_org_name}
+        vault write concourse/${concourse_team_name}/pcf-space-name value=${pcf_space_name}
         echo -e "${green_color}Done!${no_color}"
         echo ""
     fi
 
-    if [ "${pcf_api_endpoint}" != "" ] && [ "${pcf_org}" != "" ] && [ "${pcf_space}" != "" ] ; then
-        echo -e "${cyan_color}Storing PCF shared API endpoint, organization, and space into Vault for Concourse CI pipeline...${no_color}"
-        vault write concourse/${concourse_team_name}/pcf-api-endpoint value=${pcf_api_endpoint}
-        vault write concourse/${concourse_team_name}/pcf-org value=${pcf_org}
-        vault write concourse/${concourse_team_name}/pcf-space value=${pcf_space}
+    if [ "${pcf_username}" != "" ] && [ "${pcf_password}" != "" ] ; then
+        echo -e "${cyan_color}Storing PCF shared credentials into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/pcf-username value=${pcf_username}
+        vault write concourse/${concourse_team_name}/pcf-password value=${pcf_password}
         echo -e "${green_color}Done!${no_color}"
         echo ""
     fi
@@ -328,7 +328,7 @@ if [ "${pipeline_creds_storage_option}" == "V" ] ; then
 
     if [ "${github_email}" != "" ] ; then
         echo -e "${cyan_color}Storing GitHub private key for GitHub deploy key into Vault for Concourse CI pipeline...${no_color}"
-        vault kv put concourse/${concourse_team_name}/${pipeline_name}/github-private-key cert=${ssh_private_key_file}
+        vault kv put concourse/${concourse_team_name}/${pipeline_name}/project-git-repo-private-key cert=${ssh_private_key_file}
         echo -e "${green_color}Done!${no_color}"
         echo ""
     fi
@@ -341,15 +341,15 @@ if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
     echo "---" > ${pipeline_credentials_file}
     echo "docker-username: ${docker_username}" >> ${pipeline_credentials_file}
     echo "docker-password: ${docker_password}" >> ${pipeline_credentials_file}
+    echo "pcf-api-endpoint: ${pcf_api_endpoint}" >> ${pipeline_credentials_file}
+    echo "pcf-org-name: ${pcf_org_name}" >> ${pipeline_credentials_file}
+    echo "pcf-space-name: ${pcf_space_name}" >> ${pipeline_credentials_file}
     echo "pcf-username: ${pcf_username}" >> ${pipeline_credentials_file}
     echo "pcf-password: ${pcf_password}" >> ${pipeline_credentials_file}
-    echo "pcf-api-endpoint: ${pcf_api_endpoint}" >> ${pipeline_credentials_file}
-    echo "pcf-org: ${pcf_org}" >> ${pipeline_credentials_file}
-    echo "pcf-space: ${pcf_space}" >> ${pipeline_credentials_file}
     echo "db-username: ${db_username}" >> ${pipeline_credentials_file}
     echo "db-password: ${db_password}" >> ${pipeline_credentials_file}
-    echo "github-private-key: |" >> ${pipeline_credentials_file}
-    echo -e "${private_key}" >> ${pipeline_credentials_file}
+    echo "project-git-repo-private-key: |" >> ${pipeline_credentials_file}
+    echo -e "${project_git_repo_private_key}" >> ${pipeline_credentials_file}
     echo -e "${green_color}Done!${no_color}"
     echo ""
 fi

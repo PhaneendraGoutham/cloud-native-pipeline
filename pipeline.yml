@@ -36,6 +36,7 @@ jobs:
     file: shared-pipeline/ci/tasks/deploy-blue.yml
     params:
       pcf_app_name: ((pcf-app-name))
+      pcf_api_endpoint: ((pcf-api-endpoint))
       pcf_org_name: ((pcf-org-name))
       pcf_space_name: ((pcf-space-name))
       pcf_username: ((pcf-username))
@@ -49,7 +50,6 @@ resources:
     branch: ((shared-pipeline-git-repo-branch))
     check: true
     ignore_paths: [README.md]
-    private_key: ((shared-pipeline-git-repo-private-key))
 
 - name: custom-pipeline
   type: git
