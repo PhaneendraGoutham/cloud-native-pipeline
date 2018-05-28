@@ -39,6 +39,7 @@ if [ "${concourse_team_name}" == "" ] ; then
     concourse_team_name=${default_concourse_team_name}
 fi
 
+concourse_team_name=$(to_lower_case "${concourse_team_name}")
 concourse_team_name=$(replace_special_chars_with_dash "${concourse_team_name}")
 
 echo -e "Does your cloud-native project need to publish its own Docker image(s)?"
@@ -133,19 +134,46 @@ if [ "${has_pcf}" == "Y" ] ; then
     has_pcf_api_org_space=`echo $(to_upper_case "${has_pcf_api_org_space}")`
 
     if [ "${has_pcf_api_org_space}" == "N" ] ; then
-        echo -e "Enter value for ${cyan_color}'pcfApiEndpoint' (required)${no_color}, followed by [ENTER]:"
+        echo -e "Enter value for ${cyan_color}'pcfApiEndpoint' (default: ${default_pcf_api_endpoint})${no_color}, followed by [ENTER]:"
         read pcf_api_endpoint
         echo ""
 
         if [ "${pcf_api_endpoint}" == "" ] ; then
-            echo -e "${red_color}ERROR! 'pcfApiEndpoint' not entered! Please try again.${no_color}"
-            echo ""
-            exit 1
+            pcf_api_endpoint=${default_pcf_api_endpoint}
         fi
+
+        echo -e "Enter value for ${cyan_color}'pcfOrg' (default: ${default_pcf_org})${no_color}, followed by [ENTER]:"
+        read pcf_org
+        echo ""
+
+        if [ "${pcf_org}" == "" ] ; then
+            pcf_org=${default_pcf_org}
+        fi
+
+        pcf_org=$(to_lower_case ${pcf_org})
+        pcf_org=$(replace_special_chars_with_dash ${pcf_org})
+
+        echo -e "Enter value for ${cyan_color}'pcfSpace' (default: ${default_pcf_space})${no_color}, followed by [ENTER]:"
+        read pcf_space
+        echo ""
+
+        if [ "${pcf_space}" == "" ] ; then
+            pcf_space=${default_pcf_space}
+        fi
+
+        pcf_space=$(to_lower_case ${pcf_space})
+        pcf_space=$(replace_special_chars_with_dash ${pcf_space})
+    else
+        pcf_api_endpoint=""
+        pcf_org=""
+        pcf_space=""
     fi
 else
     pcf_username=""
     pcf_password=""
+    pcf_api_endpoint=""
+    pcf_org=""
+    pcf_space=""
 fi
 
 echo -e "Does your cloud-native project have a database?"
@@ -156,101 +184,155 @@ echo ""
 has_db=`echo $(to_upper_case "${has_db}")`
 
 if [ "${has_db}" == "Y" ] ; then
-    echo -e "Enter value for ${cyan_color}'dbUserName' (required)${no_color}, followed by [ENTER]:"
-    read db_username
+    echo -e "Does your cloud-native project share previously set up database credentials?"
+    echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+    read has_db_creds
     echo ""
 
-    if [ "${db_username}" == "" ] ; then
-        echo -e "${red_color}ERROR! 'dbUserName' not entered! Please try again.${no_color}"
-        echo ""
-        exit 1
-    fi
+    has_db_creds=`echo $(to_upper_case "${has_db_creds}")`
 
-    echo -e "Enter value for ${cyan_color}'dbPassword' (required)${no_color}, followed by [ENTER]:"
-    db_password=$(read_password_input)
-    echo ""
-
-    if [ "${db_password}" == "" ] ; then
-        echo -e "${red_color}ERROR! 'dbPassword' not entered! Please try again.${no_color}"
+    if [ "${has_db_creds}" == "N" ] ; then
+        echo -e "Enter value for ${cyan_color}'dbUserName' (required)${no_color}, followed by [ENTER]:"
+        read db_username
         echo ""
-        exit 1
+
+        if [ "${db_username}" == "" ] ; then
+            echo -e "${red_color}ERROR! 'dbUserName' not entered! Please try again.${no_color}"
+            echo ""
+            exit 1
+        fi
+
+        echo -e "Enter value for ${cyan_color}'dbPassword' (required)${no_color}, followed by [ENTER]:"
+        db_password=$(read_password_input)
+        echo ""
+
+        if [ "${db_password}" == "" ] ; then
+            echo -e "${red_color}ERROR! 'dbPassword' not entered! Please try again.${no_color}"
+            echo ""
+            exit 1
+        fi
+    else
+        db_username=""
+        db_password=""
     fi
 else
     db_username=""
     db_password=""
 fi
 
-echo -e "Enter value for ${cyan_color}'githubEmail' (required)${no_color}, followed by [ENTER]:"
-read github_email
+echo -e "Does your cloud-native project share previously set up GitHub credentials?"
+echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+read has_github_creds
 echo ""
 
-if ! [[ ${github_email} =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$ ]]; then
-    echo -e "${red_color}ERROR! GitHub email address in NOT form [[A-Za-Z][0-9]@[A-Za-Z][0-9].[A-Za-Z][0-9]] (i.e. user@domain.com)! Please try again.${no_color}"
-    exit 1
+has_github_creds=`echo $(to_upper_case "${has_github_creds}")`
+
+if [ "${has_github_creds}" == "N" ] ; then
+    echo -e "Enter value for ${cyan_color}'githubEmail' (required)${no_color}, followed by [ENTER]:"
+    read github_email
+    echo ""
+
+    if ! [[ ${github_email} =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$ ]]; then
+        echo -e "${red_color}ERROR! GitHub email address in NOT form [[A-Za-Z][0-9]@[A-Za-Z][0-9].[A-Za-Z][0-9]] (i.e. user@domain.com)! Please try again.${no_color}"
+        exit 1
+    fi
+else
+    github_email=""
+fi
+
+echo -e "How do you want to store your project's pipeline credentials?"
+echo -e "Enter ${cyan_color}'CY'${no_color} for 'Credentials YAML' and ${cyan_color}'V'${no_color} for Vault or leave blank, followed by [ENTER]:"
+read pipeline_creds_storage_option
+echo ""
+
+pipeline_creds_storage_option=$(to_lower_case ${pipeline_creds_storage_option})
+pipeline_creds_storage_option=$(remove_special_chars ${pipeline_creds_storage_option})
+
+if [ "${pipeline_creds_storage_option}" != "CY" ] && [ "${pipeline_creds_storage_option}" != "V" ] ; then
+    pipeline_creds_storage_option="V"
 fi
 
 echo -e "${cyan_color}===================================================================================${no_color}"
 echo -e "${cyan_color}Pipeline credentials information${no_color}"
 echo -e "${cyan_color}===================================================================================${no_color}"
 echo -e "${cyan_color}         Pipeline name: ${pipeline_name}${no_color}"
+echo -e "${cyan_color}Pipeline creds storage: $(get_pipeline_creds_storage ${pipeline_creds_storage_option})${no_color}"
 echo -e "${cyan_color}Concourse CI team name: ${concourse_team_name}${no_color}"
 echo -e "${cyan_color}       Docker username: ${docker_username}${no_color}"
 echo -e "${cyan_color}       Docker password: $(mask_string ${docker_password})${no_color}"
 echo -e "${cyan_color}          PCF username: ${pcf_username}${no_color}"
 echo -e "${cyan_color}          PCF password: $(mask_string ${pcf_password})${no_color}"
+echo -e "${cyan_color}      PCF API endpoint: ${pcf_api_endpoint}${no_color}"
+echo -e "${cyan_color}      PCF organization: ${pcf_org}${no_color}"
+echo -e "${cyan_color}             PCF space: ${pcf_space}${no_color}"
 echo -e "${cyan_color}           DB username: ${db_username}${no_color}"
 echo -e "${cyan_color}           DB password: $(mask_string ${db_password})${no_color}"
 echo -e "${cyan_color}          GitHub email: ${github_email}${no_color}"
 echo -e "${cyan_color}===================================================================================${no_color}"
 echo ""
 
-ssh_private_key_file=${ssh_dir}/${name}_rsa
-ssh_public_key_file=${ssh_dir}/${name}_rsa.pub
+if [ "${github_email}" != "" ] ; then
+    ssh_private_key_file=${ssh_dir}/${name}_rsa
+    ssh_public_key_file=${ssh_dir}/${name}_rsa.pub
 
-echo -e "${cyan_color}Generating SSH private and public keys for GitHub repo deploy key using GitHub email address '${github_email}'...${no_color}"
-sudo mkdir -p ${ssh_dir}
-cd ${ssh_dir}
-ssh-keygen -t rsa -b ${ssh_key_size} -C ${github_email} -f ${ssh_private_key_file} -N ""
-eval "$(ssh-agent -s)"
-ssh-add -K ${ssh_private_key_file}
+    echo -e "${cyan_color}Generating SSH private and public keys for GitHub repo deploy key using GitHub email address '${github_email}'...${no_color}"
+    sudo mkdir -p ${ssh_dir}
+    cd ${ssh_dir}
+    ssh-keygen -t rsa -b ${ssh_key_size} -C ${github_email} -f ${ssh_private_key_file} -N ""
+    eval "$(ssh-agent -s)"
+    ssh-add -K ${ssh_private_key_file}
 
-while IFS='' read -r line || [[ -n "$line" ]]; do
-    private_key="${private_key}  $line\n"
-done < ${ssh_private_key_file}
+    while IFS='' read -r line || [[ -n "$line" ]]; do
+        private_key="${private_key}  $line\n"
+    done < ${ssh_private_key_file}
 
-echo -e "${green_color}Done!${no_color}"
-echo ""
-
-if [ "${docker_username}" != "" ] && [ "${docker_password}" != "" ] ; then
-    echo -e "${cyan_color}Storing Docker shared credentials into Vault for Concourse CI pipeline...${no_color}"
-    vault write concourse/${concourse_team_name}/docker-username value=${docker_username}
-    vault write concourse/${concourse_team_name}/docker-password value=${docker_password}
     echo -e "${green_color}Done!${no_color}"
     echo ""
 fi
 
-if [ "${pcf_username}" != "" ] && [ "${pcf_password}" != "" ] ; then
-    echo -e "${cyan_color}Storing PCF shared credentials into Vault for Concourse CI pipeline...${no_color}"
-    vault write concourse/${concourse_team_name}/pcf-username value=${pcf_username}
-    vault write concourse/${concourse_team_name}/pcf-password value=${pcf_password}
-    echo -e "${green_color}Done!${no_color}"
-    echo ""
+if [ "${pipeline_creds_storage_option}" == "V" ] ; then
+    if [ "${docker_username}" != "" ] && [ "${docker_password}" != "" ] ; then
+        echo -e "${cyan_color}Storing Docker shared credentials into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/docker-username value=${docker_username}
+        vault write concourse/${concourse_team_name}/docker-password value=${docker_password}
+        echo -e "${green_color}Done!${no_color}"
+        echo ""
+    fi
+
+    if [ "${pcf_username}" != "" ] && [ "${pcf_password}" != "" ] ; then
+        echo -e "${cyan_color}Storing PCF shared credentials into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/pcf-username value=${pcf_username}
+        vault write concourse/${concourse_team_name}/pcf-password value=${pcf_password}
+        echo -e "${green_color}Done!${no_color}"
+        echo ""
+    fi
+
+    if [ "${pcf_api_endpoint}" != "" ] && [ "${pcf_org}" != "" ] && [ "${pcf_space}" != "" ] ; then
+        echo -e "${cyan_color}Storing PCF shared API endpoint, organization, and space into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/pcf-api-endpoint value=${pcf_api_endpoint}
+        vault write concourse/${concourse_team_name}/pcf-org value=${pcf_org}
+        vault write concourse/${concourse_team_name}/pcf-space value=${pcf_space}
+        echo -e "${green_color}Done!${no_color}"
+        echo ""
+    fi
+
+    if [ "${db_username}" != "" ] && [ "${db_password}" != "" ] ; then
+        echo -e "${cyan_color}Storing DB credentials into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/${pipeline_name}/db-username value=${db_username}
+        vault write concourse/${concourse_team_name}/${pipeline_name}/db-password value=${db_password}
+        echo -e "${green_color}Done!${no_color}"
+        echo ""
+    fi
+
+    if [ "${github_email}" != "" ] ; then
+        echo -e "${cyan_color}Storing GitHub private key for GitHub deploy key into Vault for Concourse CI pipeline...${no_color}"
+        vault kv put concourse/${concourse_team_name}/${pipeline_name}/github-private-key cert=${ssh_private_key_file}
+        echo -e "${green_color}Done!${no_color}"
+        echo ""
+    fi
 fi
 
-if [ "${db_username}" != "" ] && [ "${db_password}" != "" ] ; then
-    echo -e "${cyan_color}Storing DB credentials into Vault for Concourse CI pipeline...${no_color}"
-    vault write concourse/${concourse_team_name}/${pipeline_name}/db-username value=${db_username}
-    vault write concourse/${concourse_team_name}/${pipeline_name}/db-password value=${db_password}
-    echo -e "${green_color}Done!${no_color}"
-    echo ""
-fi
-
-echo -e "${cyan_color}Storing GitHub private key for GitHub deploy key into Vault...${no_color}"
-vault kv put concourse/${concourse_team_name}/${pipeline_name}/github-private-key cert=${ssh_private_key_file}
-echo -e "${green_color}Done!${no_color}"
-echo ""
-
-if [ -d "${project_dir}/ci" ]; then
+if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
     echo -e "${cyan_color}Generating pipeline credentials file '${pipeline_credentials_file}'...${no_color}"
     cd ${project_dir}/ci
     rm -rf ${pipeline_credentials_file}
@@ -259,6 +341,9 @@ if [ -d "${project_dir}/ci" ]; then
     echo "docker-password: ${docker_password}" >> ${pipeline_credentials_file}
     echo "pcf-username: ${pcf_username}" >> ${pipeline_credentials_file}
     echo "pcf-password: ${pcf_password}" >> ${pipeline_credentials_file}
+    echo "pcf-api-endpoint: ${pcf_api_endpoint}" >> ${pipeline_credentials_file}
+    echo "pcf-org: ${pcf_org}" >> ${pipeline_credentials_file}
+    echo "pcf-space: ${pcf_space}" >> ${pipeline_credentials_file}
     echo "db-username: ${db_username}" >> ${pipeline_credentials_file}
     echo "db-password: ${db_password}" >> ${pipeline_credentials_file}
     echo "github-private-key: |" >> ${pipeline_credentials_file}
@@ -267,10 +352,12 @@ if [ -d "${project_dir}/ci" ]; then
     echo ""
 fi
 
-echo -e "${cyan_color}Outputting SSH public key for GitHub repo deploy key...${no_color}"
-public_key=`cat ${ssh_public_key_file}`
-echo ${public_key}
-echo -e "${green_color}Done!${no_color}"
-echo ""
+if [ "${github_email}" != "" ] ; then
+    echo -e "${cyan_color}Outputting SSH public key for GitHub repo deploy key...${no_color}"
+    public_key=`cat ${ssh_public_key_file}`
+    echo ${public_key}
+    echo -e "${green_color}Done!${no_color}"
+    echo ""
+fi
 
 echo -e "${green_color}Pipeline credentials for project '${name}' generation completed successfully!${no_color}"

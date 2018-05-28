@@ -21,6 +21,16 @@ function get_name {
     echo ${name}
 }
 
+function get_pipeline_creds_storage {
+    pipeline_creds_storage_option="$1"
+
+    if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
+        echo "Credentials YAML"
+    else
+        echo "Vault"
+    fi
+}
+
 function get_version {
     version=`sed 's/version=//g' gradle.properties`
     echo ${version}
