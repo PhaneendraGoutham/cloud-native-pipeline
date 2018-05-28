@@ -56,7 +56,7 @@ if [ "${has_docker}" == "Y" ] ; then
 
     has_docker_creds=`echo $(to_upper_case "${has_docker_creds}")`
 
-    if [ "${has_docker_creds}" == "Y" ] ; then
+    if [ "${has_docker_creds}" == "N" ] ; then
         echo -e "Enter value for ${cyan_color}'dockerUserName' (required)${no_color}, followed by [ENTER]:"
         read docker_username
         echo ""
@@ -100,7 +100,7 @@ if [ "${has_pcf}" == "Y" ] ; then
 
     has_pcf_creds=`echo $(to_upper_case "${has_pcf_creds}")`
 
-    if [ "${has_pcf_creds}" == "Y" ] ; then
+    if [ "${has_pcf_creds}" == "N" ] ; then
         echo -e "Enter value for ${cyan_color}'pcfUserName' (required)${no_color}, followed by [ENTER]:"
         read pcf_username
         echo ""
@@ -185,8 +185,6 @@ echo -e "${cyan_color}          GitHub email: ${github_email}${no_color}"
 echo -e "${cyan_color}===================================================================================${no_color}"
 echo ""
 
-cd ${workspace_dir}
-
 echo -e "${cyan_color}Installing OS dependencies...${no_color}"
 sudo apt-get update
 sudo apt-get install xclip -y
@@ -199,6 +197,8 @@ ssh_private_key_file=${ssh_dir}/${name}_rsa
 ssh_public_key_file=${ssh_dir}/${name}_rsa.pub
 
 echo -e "${cyan_color}Generating SSH private and public keys for GitHub repo deploy key using GitHub email address '${github_email}'...${no_color}"
+sudo mkdir -p ${ssh_dir}
+cd ${ssh_dir}
 ssh-keygen -t rsa -b ${ssh_key_size} -C ${github_email} -f ${ssh_private_key_file}
 eval "$(ssh-agent -s)"
 ssh-add -K ${ssh_private_key_file}
@@ -210,7 +210,7 @@ done < ${ssh_private_key_file}
 echo -e "${green_color}Done!${no_color}"
 echo ""
 
-echo -e "${cyan_color}Copying SSH public key for GitHub repo deploy key...${no_color}"
+echo -e "${cyan_color}Copying SSH public key for GitHub repo deploy key to clipboard...${no_color}"
 public_key=`cat ${ssh_public_key_file}`
 echo ${public_key} | setclip
 echo -e "${green_color}Done!${no_color}"
@@ -244,29 +244,28 @@ if [ "${db_username}" != "" ] && [ "${db_password}" != "" ] ; then
 fi
 
 echo -e "${cyan_color}Storing GitHub private key for GitHub deploy key into Vault...${no_color}"
-vault kv put concourse/${concourse_team_name}/${pipeline_name}/github-private-key cert=@cert.pem
+vault kv put concourse/${concourse_team_name}/${pipeline_name}/github-private-key cert=${ssh_private_key_file}
 echo -e "${green_color}Done!${no_color}"
 echo ""
 
-echo "github-private-key: |" >> ${pipeline_credentials_file}
-echo -e "${private_key}" >> ${pipeline_credentials_file}
-
 echo -e "${green_color}Done!${no_color}"
 echo ""
 
-echo -e "${cyan_color}Generating pipeline credentials file '${pipeline_credentials_file}'...${no_color}"
-cd ${project_dir}/ci
-rm -rf ${pipeline_credentials_file}
-echo "---" > ${pipeline_credentials_file}
-echo "docker-username: ${docker_username}" >> ${pipeline_credentials_file}
-echo "docker-password: ${docker_password}" >> ${pipeline_credentials_file}
-echo "pcf-username: ${pcf_username}" >> ${pipeline_credentials_file}
-echo "pcf-password: ${pcf_password}" >> ${pipeline_credentials_file}
-echo "db-username: ${db_username}" >> ${pipeline_credentials_file}
-echo "db-password: ${db_password}" >> ${pipeline_credentials_file}
-echo "github-private-key: |" >> ${pipeline_credentials_file}
-echo -e "${private_key}" >> ${pipeline_credentials_file}
-echo -e "${green_color}Done!${no_color}"
-echo ""
+if [ -d "${project_dir}/ci" ]; then
+    echo -e "${cyan_color}Generating pipeline credentials file '${pipeline_credentials_file}'...${no_color}"
+    cd ${project_dir}/ci
+    rm -rf ${pipeline_credentials_file}
+    echo "---" > ${pipeline_credentials_file}
+    echo "docker-username: ${docker_username}" >> ${pipeline_credentials_file}
+    echo "docker-password: ${docker_password}" >> ${pipeline_credentials_file}
+    echo "pcf-username: ${pcf_username}" >> ${pipeline_credentials_file}
+    echo "pcf-password: ${pcf_password}" >> ${pipeline_credentials_file}
+    echo "db-username: ${db_username}" >> ${pipeline_credentials_file}
+    echo "db-password: ${db_password}" >> ${pipeline_credentials_file}
+    echo "github-private-key: |" >> ${pipeline_credentials_file}
+    echo -e "${private_key}" >> ${pipeline_credentials_file}
+    echo -e "${green_color}Done!${no_color}"
+    echo ""
+fi
 
 echo -e "${green_color}Pipeline credentials for project '${name}' generation completed successfully!${no_color}"

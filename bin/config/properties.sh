@@ -16,4 +16,4 @@ shared_pipeline_config_file=${shared_pipeline_project_dir}/${pipeline_config_fil
 shared_pipeline_parameters_file=${shared_pipeline_project_dir}/${pipeline_parameters_file}
 
 ssh_key_size=4096
-ssh_dir=~/.ssh
+ssh_dir=/.ssh
