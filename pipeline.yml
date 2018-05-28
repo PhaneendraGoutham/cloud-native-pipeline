@@ -51,6 +51,7 @@ resources:
     branch: ((shared-pipeline-git-repo-branch))
     check: true
     ignore_paths: [README.md]
+    private_key: ((shared-pipeline-git-repo-private-key))
 
 - name: custom-pipeline
   type: git
