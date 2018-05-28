@@ -68,7 +68,7 @@ if [ "${has_docker}" == "Y" ] ; then
         fi
 
         echo -e "Enter value for ${cyan_color}'dockerPassword' (required)${no_color}, followed by [ENTER]:"
-        docker_password=read_password_input
+        docker_password=$(read_password_input)
         echo ""
 
         if [ "${docker_password}" == "" ] ; then
@@ -112,7 +112,7 @@ if [ "${has_pcf}" == "Y" ] ; then
         fi
 
         echo -e "Enter value for ${cyan_color}'pcfPassword' (required)${no_color}, followed by [ENTER]:"
-        pcf_password=read_password_input
+        pcf_password=$(read_password_input)
         echo ""
 
         if [ "${pcf_password}" == "" ] ; then
@@ -148,7 +148,7 @@ if [ "${has_db}" == "Y" ] ; then
     fi
 
     echo -e "Enter value for ${cyan_color}'dbPassword' (required)${no_color}, followed by [ENTER]:"
-    db_password=read_password_input
+    db_password=$(read_password_input)
     echo ""
 
     if [ "${db_password}" == "" ] ; then

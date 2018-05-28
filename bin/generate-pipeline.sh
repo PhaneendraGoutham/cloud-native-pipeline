@@ -59,7 +59,7 @@ if [ "${concourse_username}" == "" ] ; then
 fi
 
 echo -e "Enter value for Concourse CI ${cyan_color}'password' (required)${no_color}, followed by [ENTER]:"
-concourse_password=read_password_input
+concourse_password=$(read_password_input)
 echo ""
 
 if [ "${concourse_password}" == "" ] ; then
