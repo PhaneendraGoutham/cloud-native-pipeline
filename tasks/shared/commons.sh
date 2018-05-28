@@ -38,7 +38,7 @@ function get_json_content_type {
 }
 
 function get_version {
-    version=`sed s/version=//g gradle.properties | sed s/-SNAPSHOT//g`
+    version=`sed 's/version=//g' gradle.properties | sed s/-SNAPSHOT//g`
     echo ${version}
 }
 

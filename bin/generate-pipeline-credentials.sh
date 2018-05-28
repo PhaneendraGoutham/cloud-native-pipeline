@@ -124,6 +124,25 @@ if [ "${has_pcf}" == "Y" ] ; then
         pcf_username=""
         pcf_password=""
     fi
+
+    echo -e "Does your cloud-native project share a previously set up PCF API endpoint, organization, and space?"
+    echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+    read has_pcf_api_org_space
+    echo ""
+
+    has_pcf_api_org_space=`echo $(to_upper_case "${has_pcf_api_org_space}")`
+
+    if [ "${has_pcf_api_org_space}" == "N" ] ; then
+        echo -e "Enter value for ${cyan_color}'pcfApiEndpoint' (required)${no_color}, followed by [ENTER]:"
+        read pcf_api_endpoint
+        echo ""
+
+        if [ "${pcf_api_endpoint}" == "" ] ; then
+            echo -e "${red_color}ERROR! 'pcfApiEndpoint' not entered! Please try again.${no_color}"
+            echo ""
+            exit 1
+        fi
+    fi
 else
     pcf_username=""
     pcf_password=""
@@ -185,14 +204,6 @@ echo -e "${cyan_color}          GitHub email: ${github_email}${no_color}"
 echo -e "${cyan_color}===================================================================================${no_color}"
 echo ""
 
-echo -e "${cyan_color}Installing OS dependencies...${no_color}"
-sudo apt-get update
-sudo apt-get install xclip -y
-alias setclip="xclip -selection c"
-alias getclip="xclip -selection c -o"
-echo -e "${green_color}Done!${no_color}"
-echo ""
-
 ssh_private_key_file=${ssh_dir}/${name}_rsa
 ssh_public_key_file=${ssh_dir}/${name}_rsa.pub
 
@@ -210,17 +221,8 @@ done < ${ssh_private_key_file}
 echo -e "${green_color}Done!${no_color}"
 echo ""
 
-echo -e "${cyan_color}Copying SSH public key for GitHub repo deploy key to clipboard...${no_color}"
-public_key=`cat ${ssh_public_key_file}`
-echo ${public_key} | setclip
-echo -e "${green_color}Done!${no_color}"
-echo ""
-
-echo -e "${cyan_color}Storing pipeline credentials into Vault...${no_color}"
-echo ""
-
 if [ "${docker_username}" != "" ] && [ "${docker_password}" != "" ] ; then
-    echo -e "${cyan_color}Storing Docker shared credentials into Vault...${no_color}"
+    echo -e "${cyan_color}Storing Docker shared credentials into Vault for Concourse CI pipeline...${no_color}"
     vault write concourse/${concourse_team_name}/docker-username value=${docker_username}
     vault write concourse/${concourse_team_name}/docker-password value=${docker_password}
     echo -e "${green_color}Done!${no_color}"
@@ -228,7 +230,7 @@ if [ "${docker_username}" != "" ] && [ "${docker_password}" != "" ] ; then
 fi
 
 if [ "${pcf_username}" != "" ] && [ "${pcf_password}" != "" ] ; then
-    echo -e "${cyan_color}Storing PCF shared credentials into Vault...${no_color}"
+    echo -e "${cyan_color}Storing PCF shared credentials into Vault for Concourse CI pipeline...${no_color}"
     vault write concourse/${concourse_team_name}/pcf-username value=${pcf_username}
     vault write concourse/${concourse_team_name}/pcf-password value=${pcf_password}
     echo -e "${green_color}Done!${no_color}"
@@ -236,7 +238,7 @@ if [ "${pcf_username}" != "" ] && [ "${pcf_password}" != "" ] ; then
 fi
 
 if [ "${db_username}" != "" ] && [ "${db_password}" != "" ] ; then
-    echo -e "${cyan_color}Storing DB credentials into Vault...${no_color}"
+    echo -e "${cyan_color}Storing DB credentials into Vault for Concourse CI pipeline...${no_color}"
     vault write concourse/${concourse_team_name}/${pipeline_name}/db-username value=${db_username}
     vault write concourse/${concourse_team_name}/${pipeline_name}/db-password value=${db_password}
     echo -e "${green_color}Done!${no_color}"
@@ -245,9 +247,6 @@ fi
 
 echo -e "${cyan_color}Storing GitHub private key for GitHub deploy key into Vault...${no_color}"
 vault kv put concourse/${concourse_team_name}/${pipeline_name}/github-private-key cert=${ssh_private_key_file}
-echo -e "${green_color}Done!${no_color}"
-echo ""
-
 echo -e "${green_color}Done!${no_color}"
 echo ""
 
@@ -267,5 +266,11 @@ if [ -d "${project_dir}/ci" ]; then
     echo -e "${green_color}Done!${no_color}"
     echo ""
 fi
+
+echo -e "${cyan_color}Outputting SSH public key for GitHub repo deploy key...${no_color}"
+public_key=`cat ${ssh_public_key_file}`
+echo ${public_key}
+echo -e "${green_color}Done!${no_color}"
+echo ""
 
 echo -e "${green_color}Pipeline credentials for project '${name}' generation completed successfully!${no_color}"

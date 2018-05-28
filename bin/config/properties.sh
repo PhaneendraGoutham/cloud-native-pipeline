@@ -15,5 +15,9 @@ shared_pipeline_project_dir=${workspace_dir}/${shared_pipeline_project}
 shared_pipeline_config_file=${shared_pipeline_project_dir}/${pipeline_config_file}
 shared_pipeline_parameters_file=${shared_pipeline_project_dir}/${pipeline_parameters_file}
 
+default_pcf_api_endpoint=https://api.sys.cfapps.io
+default_pcf_org=demo-gaig-org
+default_pcf_space=development
+
 ssh_key_size=4096
 ssh_dir=/.ssh

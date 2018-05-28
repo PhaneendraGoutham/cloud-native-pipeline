@@ -22,13 +22,15 @@ function get_name {
 }
 
 function get_version {
-    version=`sed s/version=//g gradle.properties`
+    version=`sed 's/version=//g' gradle.properties`
     echo ${version}
 }
 
 function mask_string {
     string="$1"
-    value=`echo ${string} | sed 's/./\*/g'`
+    while read -n1 character; do
+        value+="x"
+    done < <(echo -n "${string}")
     echo ${value}
 }
 
