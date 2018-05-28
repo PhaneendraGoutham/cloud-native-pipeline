@@ -1,2 +1,1 @@
-shared-pipeline-git-repo-uri: git@github.com:opengood-io/sample-cloud-native-app.git
-shared-pipeline-git-repo-branch: master
+artifact_snapshots_repo_uri: https://oss.sonatype.org/content/repositories/snapshots/
