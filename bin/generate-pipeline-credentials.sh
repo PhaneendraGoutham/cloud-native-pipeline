@@ -278,7 +278,9 @@ if [ "${github_email}" != "" ] ; then
     echo -e "${cyan_color}Generating SSH private and public keys for GitHub repo deploy key using GitHub email address '${github_email}'...${no_color}"
     sudo mkdir -p ${ssh_dir}
     cd ${ssh_dir}
-    ssh-keygen -q -t rsa -b ${ssh_key_size} -C ${github_email} -f ${ssh_private_key_file} -N ""
+    rm -f ${ssh_private_key_file}
+    rm -f ${ssh_public_key_file}
+    ssh-keygen -t rsa -b ${ssh_key_size} -C ${github_email} -f ${ssh_private_key_file} -N ""
     eval "$(ssh-agent -s)"
     ssh-add -k ${ssh_private_key_file}
 
