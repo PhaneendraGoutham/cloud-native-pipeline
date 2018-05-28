@@ -28,7 +28,7 @@ function get_version {
 
 function mask_string {
     string="$1"
-    value=`echo ${string} | sed 's/.*/\*/g'`
+    value=`echo ${string} | sed 's/./\*/g'`
     echo ${value}
 }
 
