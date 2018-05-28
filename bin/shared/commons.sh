@@ -4,7 +4,7 @@ function contains {
     string="$1"
     search_string="$2"
 
-    if echo ${string} | grep -iqF ${search_string}; then
+    if echo ${string} | grep -iqF "${search_string}"; then
         echo true
     else
         echo false

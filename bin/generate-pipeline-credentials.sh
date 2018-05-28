@@ -8,6 +8,7 @@ source ${work_dir}/config/properties.sh
 echo -e "${cyan_color}*************************************************************************${no_color}"
 echo -e "${cyan_color}OpenGood.io Cloud-Native App Concourse CI Pipeline Credentials Generator${no_color}"
 echo -e "${cyan_color}*************************************************************************${no_color}"
+echo ""
 
 is_vault_installed=`vault --version`
 

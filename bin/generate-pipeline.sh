@@ -8,6 +8,7 @@ source ${work_dir}/config/properties.sh
 echo -e "${cyan_color}*************************************************************************${no_color}"
 echo -e "${cyan_color}OpenGood.io Cloud-Native App Concourse CI Pipeline Generator${no_color}"
 echo -e "${cyan_color}*************************************************************************${no_color}"
+echo ""
 
 is_fly_installed=`fly --version`
 
@@ -48,24 +49,36 @@ fi
 
 concourse_team_name=$(replace_special_chars_with_dash "${concourse_team_name}")
 
-echo -e "Enter value for Concourse CI ${cyan_color}'username' (required)${no_color}, followed by [ENTER]:"
-read concourse_username
+echo -e "Does your cloud-native project already have a Fly CLI target saved with Concourse CI credentials?"
+echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+read has_target_saved
 echo ""
 
-if [ "${concourse_username}" == "" ] ; then
-    echo -e "${red_color}ERROR! Concourse CI 'username' not entered! Please try again.${no_color}"
-    echo ""
-    exit 1
-fi
+has_target_saved=`echo $(to_upper_case "${has_target_saved}")`
 
-echo -e "Enter value for Concourse CI ${cyan_color}'password' (required)${no_color}, followed by [ENTER]:"
-concourse_password=$(read_password_input)
-echo ""
-
-if [ "${concourse_password}" == "" ] ; then
-    echo -e "${red_color}ERROR! Concourse CI 'password' not entered! Please try again.${no_color}"
+if [ "${has_target_saved}" == "N" ] ; then
+    echo -e "Enter value for Concourse CI ${cyan_color}'username' (required)${no_color}, followed by [ENTER]:"
+    read concourse_username
     echo ""
-    exit 1
+
+    if [ "${concourse_username}" == "" ] ; then
+        echo -e "${red_color}ERROR! Concourse CI 'username' not entered! Please try again.${no_color}"
+        echo ""
+        exit 1
+    fi
+
+    echo -e "Enter value for Concourse CI ${cyan_color}'password' (required)${no_color}, followed by [ENTER]:"
+    concourse_password=$(read_password_input)
+    echo ""
+
+    if [ "${concourse_password}" == "" ] ; then
+        echo -e "${red_color}ERROR! Concourse CI 'password' not entered! Please try again.${no_color}"
+        echo ""
+        exit 1
+    fi
+else
+    concourse_username="Target Saved"
+    concourse_password="Target Saved"
 fi
 
 echo -e "${cyan_color}===================================================================================${no_color}"
@@ -102,16 +115,19 @@ cat ${shared_pipeline_parameters_file} ${project_pipeline_parameters_file} > ${g
 echo -e "${green_color}Done!${no_color}"
 echo ""
 
-echo -e "${cyan_color}Authenticating with Concourse CI via Fly...${no_color}"
-is_authenticated=`fly -t ${concourse_instance_name} login -c ${concourse_uri} -n ${concourse_team_name} -u ${concourse_username} -p ${concourse_password} -k`
+if [ "${has_target_saved}" == "N" ] ; then
+    echo -e "${cyan_color}Authenticating with Concourse CI via Fly...${no_color}"
+    is_authenticated=`fly -t ${concourse_instance_name} login -c ${concourse_uri} -n ${concourse_team_name} -u ${concourse_username} -p ${concourse_password} -k`
+    echo ${is_authenticated}
 
-if [ $(contains ${is_authenticated} "not authorized") == "true" ] ; then
-    echo -e "${red_color}Unable to authenticate with Concourse CI! Please try again.${no_color}"
+    if [ $(contains ${is_authenticated} "target saved") == "false" ] ; then
+        echo -e "${red_color}Unable to authenticate with Concourse CI! Please try again.${no_color}"
+        echo ""
+        exit 1
+    fi
+    echo -e "${green_color}Done!${no_color}"
     echo ""
-    exit 1
 fi
-echo -e "${green_color}Done!${no_color}"
-echo ""
 
 echo -e "${cyan_color}Flying pipeline to Concourse CI via Fly...${no_color}"
 fly -t ${concourse_instance_name} set-pipeline -p ${name} -c ${generated_pipeline_config_file} -l ${generated_pipeline_parameters_file} -n

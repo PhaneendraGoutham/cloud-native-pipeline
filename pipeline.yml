@@ -31,6 +31,7 @@ jobs:
   - get: source
     trigger: true
     passed: [publish]
+  - get: cf-cli-image
   - task: deploy-blue
     image: cf-cli-image
     file: shared-pipeline/ci/tasks/deploy-blue.yml
