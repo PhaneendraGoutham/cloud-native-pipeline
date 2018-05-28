@@ -221,24 +221,43 @@ else
     db_password=""
 fi
 
-echo -e "Does your cloud-native project share previously set up GitHub credentials?"
+echo -e "Does your cloud-native project use a shared pipeline with previously set up GitHub credentials?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
-read has_github_creds
+read has_shared_pipeline_github_creds
 echo ""
 
-has_github_creds=`echo $(to_upper_case "${has_github_creds}")`
+has_shared_pipeline_github_creds=`echo $(to_upper_case "${has_shared_pipeline_github_creds}")`
 
-if [ "${has_github_creds}" == "N" ] ; then
-    echo -e "Enter value for ${cyan_color}'githubEmail' (required)${no_color}, followed by [ENTER]:"
-    read github_email
+if [ "${has_shared_pipeline_github_creds}" == "N" ] ; then
+    echo -e "Enter value for ${cyan_color}'githubSharedPipelineEmail' (required)${no_color}, followed by [ENTER]:"
+    read github_shared_pipeline_email
     echo ""
 
-    if ! [[ ${github_email} =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$ ]]; then
+    if ! [[ ${github_shared_pipeline_email} =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$ ]]; then
         echo -e "${red_color}ERROR! GitHub email address in NOT form [[A-Za-Z][0-9]@[A-Za-Z][0-9].[A-Za-Z][0-9]] (i.e. user@domain.com)! Please try again.${no_color}"
         exit 1
     fi
 else
-    github_email=""
+fi
+
+echo -e "Does your cloud-native project share previously set up GitHub credentials?"
+echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+read has_github_project_creds
+echo ""
+
+has_github_project_creds=`echo $(to_upper_case "${has_github_project_creds}")`
+
+if [ "${has_github_project_creds}" == "N" ] ; then
+    echo -e "Enter value for ${cyan_color}'githubProjectEmail' (required)${no_color}, followed by [ENTER]:"
+    read github_project_email
+    echo ""
+
+    if ! [[ ${github_project_email} =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$ ]]; then
+        echo -e "${red_color}ERROR! GitHub email address in NOT form [[A-Za-Z][0-9]@[A-Za-Z][0-9].[A-Za-Z][0-9]] (i.e. user@domain.com)! Please try again.${no_color}"
+        exit 1
+    fi
+else
+    github_project_email=""
 fi
 
 echo -e "How do you want to store your project's pipeline credentials?"
@@ -256,39 +275,75 @@ fi
 echo -e "${cyan_color}===================================================================================${no_color}"
 echo -e "${cyan_color}Pipeline credentials information${no_color}"
 echo -e "${cyan_color}===================================================================================${no_color}"
-echo -e "${cyan_color}         Pipeline name: ${pipeline_name}${no_color}"
-echo -e "${cyan_color}Pipeline creds storage: $(get_pipeline_creds_storage ${pipeline_creds_storage_option})${no_color}"
-echo -e "${cyan_color}Concourse CI team name: ${concourse_team_name}${no_color}"
-echo -e "${cyan_color}       Docker username: ${docker_username}${no_color}"
-echo -e "${cyan_color}       Docker password: $(mask_string ${docker_password})${no_color}"
-echo -e "${cyan_color}      PCF API endpoint: ${pcf_api_endpoint}${no_color}"
-echo -e "${cyan_color} PCF organization name: ${pcf_org_name}${no_color}"
-echo -e "${cyan_color}        PCF space name: ${pcf_space_name}${no_color}"
-echo -e "${cyan_color}          PCF username: ${pcf_username}${no_color}"
-echo -e "${cyan_color}          PCF password: $(mask_string ${pcf_password})${no_color}"
-echo -e "${cyan_color}           DB username: ${db_username}${no_color}"
-echo -e "${cyan_color}           DB password: $(mask_string ${db_password})${no_color}"
-echo -e "${cyan_color}          GitHub email: ${github_email}${no_color}"
+echo ""
+echo -e "${cyan_color}===================================================================================${no_color}"
+echo -e "${cyan_color}Pipeline{no_color}"
+echo -e "${cyan_color}===================================================================================${no_color}"
+echo -e "${cyan_color}      Pipeline name: ${pipeline_name}${no_color}"
+echo -e "${cyan_color}Credentials storage: $(get_pipeline_creds_storage ${pipeline_creds_storage_option})${no_color}"
+echo ""
+echo -e "${cyan_color}===================================================================================${no_color}"
+echo -e "${cyan_color}Concourse CI{no_color}"
+echo -e "${cyan_color}===================================================================================${no_color}"
+echo -e "${cyan_color}Team name: ${concourse_team_name}${no_color}"
+echo ""
+echo -e "${cyan_color}===================================================================================${no_color}"
+echo -e "${cyan_color}Docker{no_color}"
+echo -e "${cyan_color}===================================================================================${no_color}"
+echo -e "${cyan_color}Username: ${docker_username}${no_color}"
+echo -e "${cyan_color}Password: $(mask_string ${docker_password})${no_color}"
+echo ""
+echo -e "${cyan_color}===================================================================================${no_color}"
+echo -e "${cyan_color}PCFeno_color}"
+echo -e "${cyan_color}===================================================================================${no_color}"
+echo -e "${cyan_color}     API endpoint: ${pcf_api_endpoint}${no_color}"
+echo -e "${cyan_color}Organization name: ${pcf_org_name}${no_color}"
+echo -e "${cyan_color}       Space name: ${pcf_space_name}${no_color}"
+echo -e "${cyan_color}         Username: ${pcf_username}${no_color}"
+echo -e "${cyan_color}         Password: $(mask_string ${pcf_password})${no_color}"
+echo ""
+echo -e "${cyan_color}===================================================================================${no_color}"
+echo -e "${cyan_color}Database{no_color}"
+echo -e "${cyan_color}===================================================================================${no_color}"
+echo -e "${cyan_color}Username: ${db_username}${no_color}"
+echo -e "${cyan_color}Password: $(mask_string ${db_password})${no_color}"
+echo ""
+echo -e "${cyan_color}===================================================================================${no_color}"
+echo -e "${cyan_color}GitHub{no_color}"
+echo -e "${cyan_color}===================================================================================${no_color}"
+echo -e "${cyan_color}Shared pipeline email: ${github_shared_pipeline_email}${no_color}"
+echo -e "${cyan_color}        Project email: ${github_project_email}${no_color}"
 echo -e "${cyan_color}===================================================================================${no_color}"
 echo ""
 
-if [ "${github_email}" != "" ] ; then
+if [ "${github_shared_pipeline_email}" != "" ] ; then
+    ssh_private_key_file=${ssh_dir}/${shared_pipeline_project}_rsa
+    ssh_public_key_file=${ssh_dir}/${shared_pipeline_project}_rsa.pub
+
+    echo -e "${cyan_color}Generating SSH private/public keys for shared pipeline GitHub repo deploy key using GitHub email address '${github_shared_pipeline_email}'...${no_color}"
+    shared_pipeline_git_repo_private_key=$(generate_github_ssh_keys \
+        "${ssh_dir}" \
+        "${ssh_private_key_file}" \
+        "${ssh_public_key_file}" \
+        ${ssh_key_size} \
+        "${github_shared_pipeline_email}")
+    shared_pipeline_git_repo_public_key=`cat ${ssh_public_key_file}`
+    echo -e "${green_color}Done!${no_color}"
+    echo ""
+fi
+
+if [ "${github_project_email}" != "" ] ; then
     ssh_private_key_file=${ssh_dir}/${name}_rsa
     ssh_public_key_file=${ssh_dir}/${name}_rsa.pub
 
-    echo -e "${cyan_color}Generating SSH private and public keys for GitHub repo deploy key using GitHub email address '${github_email}'...${no_color}"
-    sudo mkdir -p ${ssh_dir}
-    cd ${ssh_dir}
-    rm -f ${ssh_private_key_file}
-    rm -f ${ssh_public_key_file}
-    ssh-keygen -t rsa -b ${ssh_key_size} -C ${github_email} -f ${ssh_private_key_file} -N ""
-    eval "$(ssh-agent -s)"
-    ssh-add -k ${ssh_private_key_file}
-
-    while IFS='' read -r line || [[ -n "$line" ]]; do
-        project_git_repo_private_key="${project_git_repo_private_key}  $line\n"
-    done < ${ssh_private_key_file}
-
+    echo -e "${cyan_color}Generating SSH private/public keys for project GitHub repo deploy key using GitHub email address '${github_project_email}'...${no_color}"
+    project_git_repo_private_key=$(generate_github_ssh_keys \
+        "${ssh_dir}" \
+        "${ssh_private_key_file}" \
+        "${ssh_public_key_file}" \
+        ${ssh_key_size} \
+        "${github_project_email}")
+    project_git_repo_public_key=`cat ${ssh_public_key_file}`
     echo -e "${green_color}Done!${no_color}"
     echo ""
 fi
@@ -327,9 +382,16 @@ if [ "${pipeline_creds_storage_option}" == "V" ] ; then
         echo ""
     fi
 
-    if [ "${github_email}" != "" ] ; then
-        echo -e "${cyan_color}Storing GitHub private key for GitHub deploy key into Vault for Concourse CI pipeline...${no_color}"
-        vault kv put concourse/${concourse_team_name}/${pipeline_name}/project-git-repo-private-key cert=${ssh_private_key_file}
+    if [ "${github_shared_pipeline_email}" != "" ] ; then
+        echo -e "${cyan_color}Storing GitHub private key for shared pipeline GitHub deploy key into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/shared-pipeline-git-repo-private-key value="${shared_pipeline_git_repo_private_key}"
+        echo -e "${green_color}Done!${no_color}"
+        echo ""
+    fi
+
+    if [ "${github_project_email}" != "" ] ; then
+        echo -e "${cyan_color}Storing GitHub private key for project GitHub deploy key into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/${pipeline_name}/project-git-repo-private-key value="${project_git_repo_private_key}"
         echo -e "${green_color}Done!${no_color}"
         echo ""
     fi
@@ -349,16 +411,24 @@ if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
     echo "pcf-password: ${pcf_password}" >> ${pipeline_credentials_file}
     echo "db-username: ${db_username}" >> ${pipeline_credentials_file}
     echo "db-password: ${db_password}" >> ${pipeline_credentials_file}
+    echo "shared-pipeline-git-repo-private-key: |" >> ${pipeline_credentials_file}
+    echo -e "${shared_pipeline_git_repo_private_key}" >> ${pipeline_credentials_file}
     echo "project-git-repo-private-key: |" >> ${pipeline_credentials_file}
     echo -e "${project_git_repo_private_key}" >> ${pipeline_credentials_file}
     echo -e "${green_color}Done!${no_color}"
     echo ""
 fi
 
-if [ "${github_email}" != "" ] ; then
-    echo -e "${cyan_color}Outputting SSH public key for GitHub repo deploy key...${no_color}"
-    public_key=`cat ${ssh_public_key_file}`
-    echo ${public_key}
+if [ "${github_shared_pipeline_email}" != "" ] ; then
+    echo -e "${cyan_color}Outputting SSH public key for shared pipeline GitHub repo deploy key...${no_color}"
+    echo ${shared_pipeline_git_repo_public_key}
+    echo -e "${green_color}Done!${no_color}"
+    echo ""
+fi
+
+if [ "${github_project_email}" != "" ] ; then
+    echo -e "${cyan_color}Outputting SSH public key for project GitHub repo deploy key...${no_color}"
+    echo ${project_git_repo_public_key}
     echo -e "${green_color}Done!${no_color}"
     echo ""
 fi

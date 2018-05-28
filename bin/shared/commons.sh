@@ -11,6 +11,27 @@ function contains {
     fi
 }
 
+function generate_github_ssh_keys {
+    ssh_dir="$1"
+    ssh_private_key_file="$2"
+    ssh_public_key_file="$3"
+    ssh_key_size=$4
+    github_email="$5"
+
+    sudo mkdir -p ${ssh_dir}
+    cd ${ssh_dir}
+    rm -f ${ssh_private_key_file}
+    rm -f ${ssh_public_key_file}
+    ssh-keygen -t rsa -b ${ssh_key_size} -C ${github_email} -f ${ssh_private_key_file} -N ""
+    eval "$(ssh-agent -s)"
+    ssh-add -k ${ssh_private_key_file}
+
+    while IFS='' read -r line || [[ -n "$line" ]]; do
+        private_key="${private_key}  $line\n"
+    done < ${ssh_private_key_file}
+    echo ${private_key}
+}
+
 function get_group {
     group=`awk '/group/{print $NF}' build.gradle | sed s/\'//g`
     echo ${group}
