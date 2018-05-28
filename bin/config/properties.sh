@@ -7,8 +7,8 @@ concourse_uri=http://concourse.opengood.io:8080
 default_concourse_team_name=main
 
 default_pcf_api_endpoint=https://api.sys.cfapps.io
-default_pcf_org=demo-gaig-org
-default_pcf_space=development
+default_pcf_org_name=demo-gaig-org
+default_pcf_space_name=development
 
 pipeline_config_file=pipeline.yml
 pipeline_credentials_file=credentials.yml
