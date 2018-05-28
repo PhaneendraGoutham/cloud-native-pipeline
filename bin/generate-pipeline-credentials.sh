@@ -238,6 +238,7 @@ if [ "${has_shared_pipeline_github_creds}" == "N" ] ; then
         exit 1
     fi
 else
+    github_shared_pipeline_email=""
 fi
 
 echo -e "Does your cloud-native project share previously set up GitHub credentials?"
