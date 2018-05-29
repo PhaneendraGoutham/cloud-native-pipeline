@@ -434,15 +434,63 @@ if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
 fi
 
 if [ "${github_shared_pipeline_email}" != "" ] ; then
-    echo -e "${cyan_color}Outputting SSH public key for shared pipeline GitHub repo deploy key...${no_color}"
-    echo ${shared_pipeline_git_repo_public_key}
+    echo -e "${cyan_color}Creating shared pipeline GitHub repo deploy key...${no_color}"
+
+    github_user=`vault read /concourse/main/github-user | grep "value" | awk '{print $2}'`
+    github_token=`vault read /concourse/main/github-token | grep "value" | awk '{print $2}'`
+
+    github_deploy_key_id=$(get_github_deploy_key_id \
+        ${github_api_uri} \
+        ${github_user} \
+        ${github_token} \
+        ${shared_pipeline_project} \
+        ${github_deploy_key_title})
+    delete_github_deploy_key \
+        ${github_api_uri} \
+        ${github_user} \
+        ${github_token} \
+        ${shared_pipeline_project} \
+        ${github_deploy_key_id}
+    create_github_deploy_key \
+        ${github_api_uri} \
+        ${github_user} \
+        ${github_token} \
+        ${shared_pipeline_project} \
+        ${github_deploy_key_title} \
+        "${shared_pipeline_git_repo_public_key}" \
+        true
+
     echo -e "${green_color}Done!${no_color}"
     echo ""
 fi
 
 if [ "${github_project_email}" != "" ] ; then
-    echo -e "${cyan_color}Outputting SSH public key for project GitHub repo deploy key...${no_color}"
-    echo ${project_git_repo_public_key}
+    echo -e "${cyan_color}Creating project GitHub repo deploy key...${no_color}"
+
+    github_user=`vault read /concourse/main/github-user | grep "value" | awk '{print $2}'`
+    github_token=`vault read /concourse/main/github-token | grep "value" | awk '{print $2}'`
+
+    github_deploy_key_id=$(get_github_deploy_key_id \
+        ${github_api_uri} \
+        ${github_user} \
+        ${github_token} \
+        ${name} \
+        ${github_deploy_key_title})
+    delete_github_deploy_key \
+        ${github_api_uri} \
+        ${github_user} \
+        ${github_token} \
+        ${name} \
+        ${github_deploy_key_id}
+    create_github_deploy_key \
+        ${github_api_uri} \
+        ${github_user} \
+        ${github_token} \
+        ${name} \
+        ${github_deploy_key_title} \
+        "${project_git_repo_public_key}" \
+        false
+
     echo -e "${green_color}Done!${no_color}"
     echo ""
 fi

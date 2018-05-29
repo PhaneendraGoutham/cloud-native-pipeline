@@ -10,6 +10,9 @@ default_pcf_api_endpoint=https://api.sys.cfapps.io
 default_pcf_org_name=demo-gaig-org
 default_pcf_space_name=development
 
+github_api_uri=https://api.github.com
+github_deploy_key_title=Concourse
+
 pipeline_config_file=pipeline.yml
 pipeline_credentials_file=credentials.yml
 pipeline_parameters_file=parameters.yml
