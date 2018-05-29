@@ -29,8 +29,6 @@ function generate_github_ssh_keys {
     while IFS='' read -r line || [[ -n "$line" ]]; do
         private_key="${private_key}  $line\n"
     done < ${ssh_private_key_file}
-    private_key=`cat ${ssh_private_key_file}`
-    echo ${private_key}
 }
 
 function get_group {

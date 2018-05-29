@@ -288,34 +288,50 @@ echo -e "${cyan_color}Concourse CI${no_color}"
 echo -e "${cyan_color}===================================================================================${no_color}"
 echo -e "${cyan_color}Team name: ${concourse_team_name}${no_color}"
 echo ""
-echo -e "${cyan_color}===================================================================================${no_color}"
-echo -e "${cyan_color}Docker${no_color}"
-echo -e "${cyan_color}===================================================================================${no_color}"
-echo -e "${cyan_color}Username: ${docker_username}${no_color}"
-echo -e "${cyan_color}Password: $(mask_string ${docker_password})${no_color}"
-echo ""
-echo -e "${cyan_color}===================================================================================${no_color}"
-echo -e "${cyan_color}PCF${no_color}"
-echo -e "${cyan_color}===================================================================================${no_color}"
-echo -e "${cyan_color}     API endpoint: ${pcf_api_endpoint}${no_color}"
-echo -e "${cyan_color}Organization name: ${pcf_org_name}${no_color}"
-echo -e "${cyan_color}       Space name: ${pcf_space_name}${no_color}"
-echo -e "${cyan_color}         Username: ${pcf_username}${no_color}"
-echo -e "${cyan_color}         Password: $(mask_string ${pcf_password})${no_color}"
-echo ""
-echo -e "${cyan_color}===================================================================================${no_color}"
-echo -e "${cyan_color}Database${no_color}"
-echo -e "${cyan_color}===================================================================================${no_color}"
-echo -e "${cyan_color}Username: ${db_username}${no_color}"
-echo -e "${cyan_color}Password: $(mask_string ${db_password})${no_color}"
-echo ""
-echo -e "${cyan_color}===================================================================================${no_color}"
-echo -e "${cyan_color}GitHub${no_color}"
-echo -e "${cyan_color}===================================================================================${no_color}"
-echo -e "${cyan_color}Shared pipeline email: ${github_shared_pipeline_email}${no_color}"
-echo -e "${cyan_color}        Project email: ${github_project_email}${no_color}"
-echo -e "${cyan_color}===================================================================================${no_color}"
-echo ""
+
+if [ "${docker_username}" != "" ] && [ "${docker_password}" != "" ] ; then
+    echo -e "${cyan_color}===================================================================================${no_color}"
+    echo -e "${cyan_color}Docker${no_color}"
+    echo -e "${cyan_color}===================================================================================${no_color}"
+    echo -e "${cyan_color}Username: ${docker_username}${no_color}"
+    echo -e "${cyan_color}Password: $(mask_string ${docker_password})${no_color}"
+    echo ""
+fi
+
+if [ "${pcf_api_endpoint}" != "" ] && \
+    [ "${pcf_org_name}" != "" ] && \
+    [ "${pcf_space_name}" != "" ] || \
+    [ "${pcf_username}" != "" ] && \
+    [ "${pcf_password}" != "" ]; then
+    echo -e "${cyan_color}===================================================================================${no_color}"
+    echo -e "${cyan_color}PCF${no_color}"
+    echo -e "${cyan_color}===================================================================================${no_color}"
+    echo -e "${cyan_color}     API endpoint: ${pcf_api_endpoint}${no_color}"
+    echo -e "${cyan_color}Organization name: ${pcf_org_name}${no_color}"
+    echo -e "${cyan_color}       Space name: ${pcf_space_name}${no_color}"
+    echo -e "${cyan_color}         Username: ${pcf_username}${no_color}"
+    echo -e "${cyan_color}         Password: $(mask_string ${pcf_password})${no_color}"
+    echo ""
+fi
+
+if [ "${db_username}" != "" ] && [ "${db_password}" != "" ] ; then
+    echo -e "${cyan_color}===================================================================================${no_color}"
+    echo -e "${cyan_color}Database${no_color}"
+    echo -e "${cyan_color}===================================================================================${no_color}"
+    echo -e "${cyan_color}Username: ${db_username}${no_color}"
+    echo -e "${cyan_color}Password: $(mask_string ${db_password})${no_color}"
+    echo ""
+fi
+
+if [ "${github_shared_pipeline_email}" != "" ] || [ "${github_project_email}" != "" ]; then
+    echo -e "${cyan_color}===================================================================================${no_color}"
+    echo -e "${cyan_color}GitHub${no_color}"
+    echo -e "${cyan_color}===================================================================================${no_color}"
+    echo -e "${cyan_color}Shared pipeline email: ${github_shared_pipeline_email}${no_color}"
+    echo -e "${cyan_color}        Project email: ${github_project_email}${no_color}"
+    echo -e "${cyan_color}===================================================================================${no_color}"
+    echo ""
+fi
 
 if [ "${github_shared_pipeline_email}" != "" ] ; then
     ssh_private_key_file=${ssh_dir}/${shared_pipeline_project}_rsa
@@ -328,6 +344,7 @@ if [ "${github_shared_pipeline_email}" != "" ] ; then
         "${ssh_public_key_file}" \
         ${ssh_key_size} \
         "${github_shared_pipeline_email}")
+    shared_pipeline_git_repo_private_key=`cat ${ssh_private_key_file}`
     shared_pipeline_git_repo_public_key=`cat ${ssh_public_key_file}`
     echo -e "${green_color}Done!${no_color}"
     echo ""
@@ -338,12 +355,8 @@ if [ "${github_project_email}" != "" ] ; then
     ssh_public_key_file=${ssh_dir}/${name}_rsa.pub
 
     echo -e "${cyan_color}Generating SSH private/public keys for project GitHub repo deploy key using GitHub email address '${github_project_email}'...${no_color}"
-    project_git_repo_private_key=$(generate_github_ssh_keys \
-        "${ssh_dir}" \
-        "${ssh_private_key_file}" \
-        "${ssh_public_key_file}" \
-        ${ssh_key_size} \
-        "${github_project_email}")
+    generate_github_ssh_keys "${ssh_dir}" "${ssh_private_key_file}" "${ssh_public_key_file}" ${ssh_key_size} "${github_project_email}"
+    project_git_repo_private_key=`cat ${ssh_private_key_file}`
     project_git_repo_public_key=`cat ${ssh_public_key_file}`
     echo -e "${green_color}Done!${no_color}"
     echo ""
