@@ -446,13 +446,17 @@ if [ "${github_shared_pipeline_email}" != "" ] ; then
         "${github_org}" \
         "${shared_pipeline_project}" \
         "${github_deploy_key_title}")
-    delete_github_deploy_key \
-        "${github_api_uri}" \
-        "${github_user}" \
-        "${github_token}" \
-        "${github_org}" \
-        "${shared_pipeline_project}" \
-        "${github_deploy_key_id}"
+
+    if [ "${github_deploy_key_id}" != "" ] ; then
+        delete_github_deploy_key \
+            "${github_api_uri}" \
+            "${github_user}" \
+            "${github_token}" \
+            "${github_org}" \
+            "${shared_pipeline_project}" \
+            "${github_deploy_key_id}"
+    fi
+
     create_github_deploy_key \
         "${github_api_uri}" \
         "${github_user}" \
@@ -480,13 +484,17 @@ if [ "${github_project_email}" != "" ] ; then
         "${github_org}" \
         "${name}" \
         "${github_deploy_key_title}")
-    delete_github_deploy_key \
-        "${github_api_uri}" \
-        "${github_user}" \
-        "${github_token}" \
-        "${github_org}" \
-        "${name}" \
-        "${github_deploy_key_id}"
+
+    if [ "${github_deploy_key_id}" != "" ] ; then
+        delete_github_deploy_key \
+            "${github_api_uri}" \
+            "${github_user}" \
+            "${github_token}" \
+            "${github_org}" \
+            "${name}" \
+            "${github_deploy_key_id}"
+    fi
+
     create_github_deploy_key \
         "${github_api_uri}" \
         "${github_user}" \
