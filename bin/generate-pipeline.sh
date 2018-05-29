@@ -126,7 +126,9 @@ echo ""
 
 echo -e "${cyan_color}Building Concourse CI pipeline for deployment, if it exists...${no_color}"
 cp ${shared_pipeline_config_file} ${generated_pipeline_config_file}
-cat ${shared_pipeline_parameters_file} ${project_pipeline_parameters_file} > ${generated_pipeline_parameters_file}
+cat ${shared_pipeline_parameters_file} <(echo) ${project_pipeline_parameters_file} > ${generated_pipeline_parameters_file}
+cat ${generated_pipeline_parameters_file}
+echo ""
 echo -e "${green_color}Done!${no_color}"
 echo ""
 
