@@ -8,7 +8,7 @@ jobs:
   - get: cloud-native-image
   - task: run-all-tests
     image: cloud-native-image
-    file: shared-pipeline/ci/tasks/run-tests.yml
+    file: shared-pipeline/tasks/run-tests.yml
 
 - name: publish
   plan:
@@ -20,7 +20,7 @@ jobs:
   - get: cloud-native-image
   - task: publish
     image: cloud-native-image
-    file: shared-pipeline/ci/tasks/publish.yml
+    file: shared-pipeline/tasks/publish.yml
     params:
       github_private_key: ((project-git-repo-private-key))
 
@@ -34,7 +34,7 @@ jobs:
   - get: cf-cli-image
   - task: deploy-blue
     image: cf-cli-image
-    file: shared-pipeline/ci/tasks/deploy-blue.yml
+    file: shared-pipeline/tasks/deploy-blue.yml
     params:
       pcf_app_name: ((pcf-app-name))
       pcf_api_endpoint: ((pcf-api-endpoint))
