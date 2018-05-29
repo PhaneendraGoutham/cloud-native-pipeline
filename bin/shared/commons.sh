@@ -15,23 +15,25 @@ function create_github_deploy_key {
     github_api_uri="$1"
     github_user="$2"
     github_token="$3"
-    github_repo="$4"
-    github_deploy_key_title="$5"
-    github_deploy_key="$6"
-    github_deploy_key_read_only=$7
+    github_org="$4"
+    github_repo="$5"
+    github_deploy_key_title="$6"
+    github_deploy_key="$7"
+    github_deploy_key_read_only=$8
 
     json="{ \"title\": \"${github_deploy_key_title}\", \"key\": \"${github_deploy_key}\", \"read_only\": ${github_deploy_key_read_only} }"
-    curl -u "${github_user}:${github_token}" -d ${json} -X POST "${github_api_uri}/repos/${github_repo}/keys"
+    curl -u "${github_user}:${github_token}" -d "${json}" -X POST "${github_api_uri}/repos/${github_org}/${github_repo}/keys"
 }
 
 function delete_github_deploy_key {
     github_api_uri="$1"
     github_user="$2"
     github_token="$3"
-    github_repo="$4"
-    github_deploy_key_id="$5"
+    github_org="$4"
+    github_repo="$5"
+    github_deploy_key_id="$6"
 
-    curl -u "${github_user}:${github_token}" -X DELETE "${github_api_uri}/repos/${github_repo}/keys/${github_deploy_key_id}"
+    curl -u "${github_user}:${github_token}" -X DELETE "${github_api_uri}/repos/${github_org}/${github_repo}/keys/${github_deploy_key_id}"
 }
 
 function generate_github_ssh_keys {
@@ -58,10 +60,12 @@ function get_github_deploy_key_id {
     github_api_uri="$1"
     github_user="$2"
     github_token="$3"
-    github_repo="$4"
-    github_deploy_key_title="$5"
+    github_org="$4"
+    github_repo="$5"
+    github_deploy_key_title="$6"
 
-    github_deploy_key_id=`curl -u "${github_user}:${github_token}" "${github_api_uri}/repos/${github_repo}/keys" | jq ".[] | select(.title == \"${github_deploy_key_title}\") | .id"`
+    json=`curl -u "${github_user}:${github_token}" "${github_api_uri}/repos/${github_org}/${github_repo}/keys"`
+    github_deploy_key_id=`echo ${json} | jq ".[] | select(.title == \"${github_deploy_key_title}\") | .id"`
     echo ${github_deploy_key_id}
 }
 

@@ -11,6 +11,7 @@ default_pcf_org_name=demo-gaig-org
 default_pcf_space_name=development
 
 github_api_uri=https://api.github.com
+github_org=opengood-io
 github_deploy_key_title=Concourse
 
 pipeline_config_file=pipeline.yml

@@ -440,25 +440,28 @@ if [ "${github_shared_pipeline_email}" != "" ] ; then
     github_token=`vault read /concourse/main/github-token | grep "value" | awk '{print $2}'`
 
     github_deploy_key_id=$(get_github_deploy_key_id \
-        ${github_api_uri} \
-        ${github_user} \
-        ${github_token} \
-        ${shared_pipeline_project} \
-        ${github_deploy_key_title})
+        "${github_api_uri}" \
+        "${github_user}" \
+        "${github_token}" \
+        "${github_org}" \
+        "${shared_pipeline_project}" \
+        "${github_deploy_key_title}")
     delete_github_deploy_key \
-        ${github_api_uri} \
-        ${github_user} \
-        ${github_token} \
-        ${shared_pipeline_project} \
-        ${github_deploy_key_id}
+        "${github_api_uri}" \
+        "${github_user}" \
+        "${github_token}" \
+        "${github_org}" \
+        "${shared_pipeline_project}" \
+        "${github_deploy_key_id}"
     create_github_deploy_key \
-        ${github_api_uri} \
-        ${github_user} \
-        ${github_token} \
-        ${shared_pipeline_project} \
-        ${github_deploy_key_title} \
+        "${github_api_uri}" \
+        "${github_user}" \
+        "${github_token}" \
+        "${github_org}" \
+        "${shared_pipeline_project}" \
+        "${github_deploy_key_title}" \
         "${shared_pipeline_git_repo_public_key}" \
-        true
+        "true"
 
     echo -e "${green_color}Done!${no_color}"
     echo ""
@@ -471,25 +474,28 @@ if [ "${github_project_email}" != "" ] ; then
     github_token=`vault read /concourse/main/github-token | grep "value" | awk '{print $2}'`
 
     github_deploy_key_id=$(get_github_deploy_key_id \
-        ${github_api_uri} \
-        ${github_user} \
-        ${github_token} \
-        ${name} \
-        ${github_deploy_key_title})
+        "${github_api_uri}" \
+        "${github_user}" \
+        "${github_token}" \
+        "${github_org}" \
+        "${name}" \
+        "${github_deploy_key_title}")
     delete_github_deploy_key \
-        ${github_api_uri} \
-        ${github_user} \
-        ${github_token} \
-        ${name} \
-        ${github_deploy_key_id}
+        "${github_api_uri}" \
+        "${github_user}" \
+        "${github_token}" \
+        "${github_org}" \
+        "${name}" \
+        "${github_deploy_key_id}"
     create_github_deploy_key \
-        ${github_api_uri} \
-        ${github_user} \
-        ${github_token} \
-        ${name} \
-        ${github_deploy_key_title} \
+        "${github_api_uri}" \
+        "${github_user}" \
+        "${github_token}" \
+        "${github_org}" \
+        "${name}" \
+        "${github_deploy_key_title}" \
         "${project_git_repo_public_key}" \
-        false
+        "false"
 
     echo -e "${green_color}Done!${no_color}"
     echo ""
