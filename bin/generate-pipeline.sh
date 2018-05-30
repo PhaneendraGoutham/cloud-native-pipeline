@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-work_dir=$(dirname $0)
-source ${work_dir}/shared/colors.sh
-source ${work_dir}/shared/commons.sh
-source ${work_dir}/config/properties.sh
+source_dir=$(dirname $0)
+source ${source_dir}/shared/colors.sh
+source ${source_dir}/shared/commons.sh
+source ${source_dir}/config/properties.sh
 
 echo -e "${cyan_color}*************************************************************************${no_color}"
 echo -e "${cyan_color}OpenGood.io Cloud-Native App Concourse CI Pipeline Generator${no_color}"
@@ -147,8 +147,8 @@ if [ "${has_target_saved}" == "N" ] ; then
 fi
 
 echo -e "${cyan_color}Flying pipeline to Concourse CI via Fly...${no_color}"
-fly -t ${concourse_instance_name} set-pipeline -p ${name} -c ${generated_pipeline_config_file} -l ${generated_pipeline_parameters_file} -n
-fly -t ${concourse_instance_name} expose-pipeline -p ${name}
+fly -t ${concourse_instance_name} set-pipeline -p ${pipeline_name} -c ${generated_pipeline_config_file} -l ${generated_pipeline_parameters_file} -n
+fly -t ${concourse_instance_name} expose-pipeline -p ${pipeline_name}
 echo -e "${green_color}Done!${no_color}"
 echo ""
 
@@ -158,4 +158,4 @@ rm -rf ${build_dir}
 echo -e "${green_color}Done!${no_color}"
 echo ""
 
-echo -e "${green_color}Concourse CI pipeline '${name}' generation completed successfully!${no_color}"
+echo -e "${green_color}Concourse CI pipeline '${pipeline_name}' generation completed successfully!${no_color}"

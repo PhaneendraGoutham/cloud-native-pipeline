@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-work_dir=$(dirname $0)
-source ${work_dir}/shared/colors.sh
-source ${work_dir}/shared/commons.sh
-source ${work_dir}/config/properties.sh
+source_dir=$(dirname $0)
+source ${source_dir}/shared/colors.sh
+source ${source_dir}/shared/commons.sh
+source ${source_dir}/config/properties.sh
 
 echo -e "${cyan_color}*************************************************************************${no_color}"
 echo -e "${cyan_color}OpenGood.io Cloud-Native App Concourse CI Pipeline Credentials Generator${no_color}"
@@ -42,6 +42,78 @@ fi
 
 concourse_team_name=$(to_lower_case "${concourse_team_name}")
 concourse_team_name=$(replace_special_chars_with_dash "${concourse_team_name}")
+
+echo -e "Does your cloud-native project share previously set up GitHub credentials?"
+echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+read has_github_creds
+echo ""
+
+has_github_creds=`echo $(to_upper_case "${has_github_creds}")`
+
+if [ "${has_github_creds}" == "N" ] ; then
+    echo -e "Enter value for ${cyan_color}'githubUser' (required)${no_color}, followed by [ENTER]:"
+    read github_user
+    echo ""
+
+    if [ "${github_user}" == "" ] ; then
+        echo -e "${red_color}ERROR! 'githubUser' not entered! Please try again.${no_color}"
+        echo ""
+        exit 1
+    fi
+
+    echo -e "Enter value for ${cyan_color}'githubToken' (required)${no_color}, followed by [ENTER]:"
+    github_token=$(read_password_input)
+    echo ""
+
+    if [ "${github_token}" == "" ] ; then
+        echo -e "${red_color}ERROR! 'githubToken' not entered! Please try again.${no_color}"
+        echo ""
+        exit 1
+    fi
+else
+    github_user=""
+    github_token=""
+fi
+
+echo -e "Does your cloud-native project use a shared pipeline with previously set up GitHub credentials?"
+echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+read has_shared_pipeline_github_creds
+echo ""
+
+has_shared_pipeline_github_creds=`echo $(to_upper_case "${has_shared_pipeline_github_creds}")`
+
+if [ "${has_shared_pipeline_github_creds}" == "N" ] ; then
+    echo -e "Enter value for ${cyan_color}'githubSharedPipelineEmail' (required)${no_color}, followed by [ENTER]:"
+    read github_shared_pipeline_email
+    echo ""
+
+    if ! [[ ${github_shared_pipeline_email} =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$ ]]; then
+        echo -e "${red_color}ERROR! GitHub email address in NOT form [[A-Za-Z][0-9]@[A-Za-Z][0-9].[A-Za-Z][0-9]] (i.e. user@domain.com)! Please try again.${no_color}"
+        exit 1
+    fi
+else
+    github_shared_pipeline_email=""
+fi
+
+echo -e "Does your cloud-native project share previously set up GitHub credentials?"
+echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+read has_github_project_creds
+echo ""
+
+has_github_project_creds=`echo $(to_upper_case "${has_github_project_creds}")`
+
+if [ "${has_github_project_creds}" == "N" ] ; then
+    echo -e "Enter value for ${cyan_color}'githubProjectEmail' (required)${no_color}, followed by [ENTER]:"
+    read github_project_email
+    echo ""
+
+    if ! [[ ${github_project_email} =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$ ]]; then
+        echo -e "${red_color}ERROR! GitHub email address in NOT form [[A-Za-Z][0-9]@[A-Za-Z][0-9].[A-Za-Z][0-9]] (i.e. user@domain.com)! Please try again.${no_color}"
+        exit 1
+    fi
+else
+    github_project_email=""
+fi
 
 echo -e "Does your cloud-native project need to publish its own Docker image(s)?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
@@ -221,46 +293,6 @@ else
     db_password=""
 fi
 
-echo -e "Does your cloud-native project use a shared pipeline with previously set up GitHub credentials?"
-echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
-read has_shared_pipeline_github_creds
-echo ""
-
-has_shared_pipeline_github_creds=`echo $(to_upper_case "${has_shared_pipeline_github_creds}")`
-
-if [ "${has_shared_pipeline_github_creds}" == "N" ] ; then
-    echo -e "Enter value for ${cyan_color}'githubSharedPipelineEmail' (required)${no_color}, followed by [ENTER]:"
-    read github_shared_pipeline_email
-    echo ""
-
-    if ! [[ ${github_shared_pipeline_email} =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$ ]]; then
-        echo -e "${red_color}ERROR! GitHub email address in NOT form [[A-Za-Z][0-9]@[A-Za-Z][0-9].[A-Za-Z][0-9]] (i.e. user@domain.com)! Please try again.${no_color}"
-        exit 1
-    fi
-else
-    github_shared_pipeline_email=""
-fi
-
-echo -e "Does your cloud-native project share previously set up GitHub credentials?"
-echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
-read has_github_project_creds
-echo ""
-
-has_github_project_creds=`echo $(to_upper_case "${has_github_project_creds}")`
-
-if [ "${has_github_project_creds}" == "N" ] ; then
-    echo -e "Enter value for ${cyan_color}'githubProjectEmail' (required)${no_color}, followed by [ENTER]:"
-    read github_project_email
-    echo ""
-
-    if ! [[ ${github_project_email} =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$ ]]; then
-        echo -e "${red_color}ERROR! GitHub email address in NOT form [[A-Za-Z][0-9]@[A-Za-Z][0-9].[A-Za-Z][0-9]] (i.e. user@domain.com)! Please try again.${no_color}"
-        exit 1
-    fi
-else
-    github_project_email=""
-fi
-
 echo -e "How do you want to store your project's pipeline credentials?"
 echo -e "Enter ${cyan_color}'CY'${no_color} for 'Credentials YAML' and ${cyan_color}'V'${no_color} for Vault or leave blank, followed by [ENTER]:"
 read pipeline_creds_storage_option
@@ -288,6 +320,21 @@ echo -e "${cyan_color}Concourse CI${no_color}"
 echo -e "${cyan_color}===================================================================================${no_color}"
 echo -e "${cyan_color}Team name: ${concourse_team_name}${no_color}"
 echo ""
+
+if [ "${github_user}" != "" ] &&
+    [ "${github_token}" != "" ] ||
+    [ "${github_shared_pipeline_email}" != "" ] ||
+    [ "${github_project_email}" != "" ]; then
+    echo -e "${cyan_color}===================================================================================${no_color}"
+    echo -e "${cyan_color}GitHub${no_color}"
+    echo -e "${cyan_color}===================================================================================${no_color}"
+    echo -e "${cyan_color}             Username: ${github_user}${no_color}"
+    echo -e "${cyan_color}                Token: ${github_token}${no_color}"
+    echo -e "${cyan_color}Shared pipeline email: ${github_shared_pipeline_email}${no_color}"
+    echo -e "${cyan_color}        Project email: ${github_project_email}${no_color}"
+    echo -e "${cyan_color}===================================================================================${no_color}"
+    echo ""
+fi
 
 if [ "${docker_username}" != "" ] && [ "${docker_password}" != "" ] ; then
     echo -e "${cyan_color}===================================================================================${no_color}"
@@ -323,16 +370,6 @@ if [ "${db_username}" != "" ] && [ "${db_password}" != "" ] ; then
     echo ""
 fi
 
-if [ "${github_shared_pipeline_email}" != "" ] || [ "${github_project_email}" != "" ]; then
-    echo -e "${cyan_color}===================================================================================${no_color}"
-    echo -e "${cyan_color}GitHub${no_color}"
-    echo -e "${cyan_color}===================================================================================${no_color}"
-    echo -e "${cyan_color}Shared pipeline email: ${github_shared_pipeline_email}${no_color}"
-    echo -e "${cyan_color}        Project email: ${github_project_email}${no_color}"
-    echo -e "${cyan_color}===================================================================================${no_color}"
-    echo ""
-fi
-
 if [ "${github_shared_pipeline_email}" != "" ] ; then
     ssh_private_key_file=${ssh_dir}/${shared_pipeline_project}_rsa
     ssh_public_key_file=${ssh_dir}/${shared_pipeline_project}_rsa.pub
@@ -363,6 +400,28 @@ if [ "${github_project_email}" != "" ] ; then
 fi
 
 if [ "${pipeline_creds_storage_option}" == "V" ] ; then
+    if [ "${github_user}" != "" ] && [ "${github_token}" != "" ] ; then
+        echo -e "${cyan_color}Storing GitHub credentials into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/github-user value=${github_user}
+        vault write concourse/${concourse_team_name}/github-token value=${github_token}
+        echo -e "${green_color}Done!${no_color}"
+        echo ""
+    fi
+
+    if [ "${github_shared_pipeline_email}" != "" ] ; then
+        echo -e "${cyan_color}Storing GitHub private key for shared pipeline GitHub deploy key into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/shared-pipeline-git-repo-private-key value="${shared_pipeline_git_repo_private_key}"
+        echo -e "${green_color}Done!${no_color}"
+        echo ""
+    fi
+
+    if [ "${github_project_email}" != "" ] ; then
+        echo -e "${cyan_color}Storing GitHub private key for project GitHub deploy key into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/${pipeline_name}/project-git-repo-private-key value="${project_git_repo_private_key}"
+        echo -e "${green_color}Done!${no_color}"
+        echo ""
+    fi
+
     if [ "${docker_username}" != "" ] && [ "${docker_password}" != "" ] ; then
         echo -e "${cyan_color}Storing Docker shared credentials into Vault for Concourse CI pipeline...${no_color}"
         vault write concourse/${concourse_team_name}/docker-username value=${docker_username}
@@ -395,20 +454,6 @@ if [ "${pipeline_creds_storage_option}" == "V" ] ; then
         echo -e "${green_color}Done!${no_color}"
         echo ""
     fi
-
-    if [ "${github_shared_pipeline_email}" != "" ] ; then
-        echo -e "${cyan_color}Storing GitHub private key for shared pipeline GitHub deploy key into Vault for Concourse CI pipeline...${no_color}"
-        vault write concourse/${concourse_team_name}/shared-pipeline-git-repo-private-key value="${shared_pipeline_git_repo_private_key}"
-        echo -e "${green_color}Done!${no_color}"
-        echo ""
-    fi
-
-    if [ "${github_project_email}" != "" ] ; then
-        echo -e "${cyan_color}Storing GitHub private key for project GitHub deploy key into Vault for Concourse CI pipeline...${no_color}"
-        vault write concourse/${concourse_team_name}/${pipeline_name}/project-git-repo-private-key value="${project_git_repo_private_key}"
-        echo -e "${green_color}Done!${no_color}"
-        echo ""
-    fi
 fi
 
 if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
@@ -436,8 +481,8 @@ fi
 if [ "${github_shared_pipeline_email}" != "" ] ; then
     echo -e "${cyan_color}Creating shared pipeline GitHub repo deploy key...${no_color}"
 
-    github_user=`vault read /concourse/main/github-user | grep "value" | awk '{print $2}'`
-    github_token=`vault read /concourse/main/github-token | grep "value" | awk '{print $2}'`
+    github_user=`vault read /concourse/${concourse_team_name}/github-user | grep "value" | awk '{print $2}'`
+    github_token=`vault read /concourse/${concourse_team_name}/github-token | grep "value" | awk '{print $2}'`
 
     github_deploy_key_id=$(get_github_deploy_key_id \
         "${github_api_uri}" \
@@ -474,8 +519,8 @@ fi
 if [ "${github_project_email}" != "" ] ; then
     echo -e "${cyan_color}Creating project GitHub repo deploy key...${no_color}"
 
-    github_user=`vault read /concourse/main/github-user | grep "value" | awk '{print $2}'`
-    github_token=`vault read /concourse/main/github-token | grep "value" | awk '{print $2}'`
+    github_user=`vault read /concourse/${concourse_team_name}/github-user | grep "value" | awk '{print $2}'`
+    github_token=`vault read /concourse/${concourse_team_name}/github-token | grep "value" | awk '{print $2}'`
 
     github_deploy_key_id=$(get_github_deploy_key_id \
         "${github_api_uri}" \
