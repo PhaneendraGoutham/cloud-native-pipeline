@@ -95,7 +95,7 @@ else
     github_shared_pipeline_email=""
 fi
 
-echo -e "Does your cloud-native project share previously set up GitHub credentials?"
+echo -e "Does your cloud-native project's pipeline share previously set up GitHub credentials?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
 read has_github_project_creds
 echo ""
@@ -329,7 +329,7 @@ if [ "${github_user}" != "" ] &&
     echo -e "${cyan_color}GitHub${no_color}"
     echo -e "${cyan_color}===================================================================================${no_color}"
     echo -e "${cyan_color}             Username: ${github_user}${no_color}"
-    echo -e "${cyan_color}                Token: ${github_token}${no_color}"
+    echo -e "${cyan_color}                Token: $(mask_string ${github_token})${no_color}"
     echo -e "${cyan_color}Shared pipeline email: ${github_shared_pipeline_email}${no_color}"
     echo -e "${cyan_color}        Project email: ${github_project_email}${no_color}"
     echo -e "${cyan_color}===================================================================================${no_color}"
