@@ -13,7 +13,7 @@ params:
 inputs:
 - name: shared-pipeline
 - name: custom-pipeline
-- name: source-code
+- name: source
 
 run:
   path: shared-pipeline/tasks/publish.sh
