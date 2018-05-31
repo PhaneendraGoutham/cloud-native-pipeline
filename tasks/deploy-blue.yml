@@ -2,9 +2,9 @@
 platform: linux
 
 params:
-  artifact_repo_uri: ((artifact_snapshots_repo_uri))
+  artifact_repo_uri: No Artifact Repo URI
   pcf_app_name: No PCF App Name
-  pcf_api_endpoint: ((pcf-api-endpoint))
+  pcf_api_endpoint: No PCF API Endpoint
   pcf_org_name: No PCF Org Name
   pcf_space_name: No PCF Space Name
   pcf_username: No PCF Username

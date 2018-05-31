@@ -23,6 +23,7 @@ jobs:
     file: shared-pipeline/tasks/publish.yml
     params:
       github_private_key: ((project-git-repo-private-key))
+      artifact_repo_uri: ((artifact_snapshots_repo_uri))
 
 - name: deploy-blue
   plan:
@@ -36,6 +37,7 @@ jobs:
     image: cf-cli-image
     file: shared-pipeline/tasks/deploy-blue.yml
     params:
+      artifact_repo_uri: ((artifact_snapshots_repo_uri))
       pcf_app_name: ((pcf-app-name))
       pcf_api_endpoint: ((pcf-api-endpoint))
       pcf_org_name: ((pcf-org-name))
