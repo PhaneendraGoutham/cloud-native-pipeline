@@ -22,7 +22,7 @@ chmod 600 ${ssh_key_file}
 ssh-keyscan ${github_host} >> ${ssh_known_hosts_file}
 cat ${ssh_known_hosts_file}
 
-eval "$(ssh-agent -s)"
+eval `$(ssh-agent -s)`
 ssh-add ${ssh_key_file}
 
 git config --global user.name "${git_user}"
