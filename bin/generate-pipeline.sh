@@ -57,7 +57,7 @@ fi
 
 project_pipeline_parameters_file=${project_dir}/ci/${pipeline_parameters_file}
 project_pipeline_config_file=${build_dir}/${pipeline_config_file}
-project_pipeline_parameters_file=${build_dir}/${pipeline_parameters_file}
+generated_pipeline_parameters_file=${build_dir}/${pipeline_parameters_file}
 
 echo -e "Enter value for Concourse CI ${cyan_color}'concourseTeamName' (default: ${default_concourse_team_name})${no_color}, followed by [ENTER]:"
 read concourse_team_name
@@ -147,8 +147,8 @@ echo ""
 
 echo -e "${cyan_color}Building Concourse CI project pipeline for deployment, if it exists...${no_color}"
 cp ${shared_pipeline_config_file} ${project_pipeline_config_file}
-cat ${shared_pipeline_parameters_file} <(echo) ${project_pipeline_parameters_file} > ${project_pipeline_parameters_file}
-cat ${project_pipeline_parameters_file}
+cat ${shared_pipeline_parameters_file} <(echo) ${project_pipeline_parameters_file} > ${generated_pipeline_parameters_file}
+cat ${generated_pipeline_parameters_file}
 echo ""
 echo -e "${green_color}Done!${no_color}"
 echo ""
@@ -168,7 +168,7 @@ if [ "${has_target_saved}" == "N" ] ; then
 fi
 
 echo -e "${cyan_color}Flying pipeline to Concourse CI via Fly...${no_color}"
-fly -t ${concourse_instance_name} set-pipeline -p ${pipeline_name} -c ${project_pipeline_config_file} -l ${project_pipeline_parameters_file} -n
+fly -t ${concourse_instance_name} set-pipeline -p ${pipeline_name} -c ${project_pipeline_config_file} -l ${generated_pipeline_parameters_file} -n
 fly -t ${concourse_instance_name} expose-pipeline -p ${pipeline_name}
 echo -e "${green_color}Done!${no_color}"
 echo ""
