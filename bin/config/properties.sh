@@ -20,8 +20,12 @@ pipeline_parameters_file=parameters.yml
 
 shared_pipeline_project=cloud-native-app-pipeline
 shared_pipeline_project_dir=${workspace_dir}/${shared_pipeline_project}
-shared_pipeline_config_file=${shared_pipeline_project_dir}/${pipeline_config_file}
-shared_pipeline_parameters_file=${shared_pipeline_project_dir}/${pipeline_parameters_file}
 
-ssh_key_size=4096
+app_pipeline_config_file=${shared_pipeline_project_dir}/app-pipeline.yml
+app_pipeline_parameters_file=${shared_pipeline_project_dir}/app-parameters.yml
+
+docker_pipeline_config_file=${shared_pipeline_project_dir}/docker-pipeline.yml
+docker_pipeline_parameters_file=${shared_pipeline_project_dir/}docker-parameters.yml
+
 ssh_dir=/.ssh
+ssh_key_size=4096

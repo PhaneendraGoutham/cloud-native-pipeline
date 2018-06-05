@@ -2,7 +2,7 @@ jobs:
 - name: run-tests
   plan:
   - get: shared-pipeline
-  - get: custom-pipeline
+  - get: project-pipeline
   - get: source
     trigger: true
   - get: cloud-native-image
@@ -13,7 +13,7 @@ jobs:
 - name: publish
   plan:
   - get: shared-pipeline
-  - get: custom-pipeline
+  - get: project-pipeline
   - get: source
     trigger: true
     passed: [run-tests]
@@ -28,7 +28,7 @@ jobs:
 - name: deploy-blue
   plan:
   - get: shared-pipeline
-  - get: custom-pipeline
+  - get: project-pipeline
   - get: source
     trigger: true
     passed: [publish]
@@ -55,7 +55,7 @@ resources:
     ignore_paths: [README.md]
     private_key: ((shared-pipeline-git-repo-private-key))
 
-- name: custom-pipeline
+- name: project-pipeline
   type: git
   source:
     uri: ((project-git-repo-uri))

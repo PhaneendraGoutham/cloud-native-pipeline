@@ -1,0 +1,47 @@
+jobs:
+- name: build-docker-image
+  plan:
+  - get: shared-pipeline
+  - get: project-pipeline
+  - get: source
+    trigger: true
+  - put: docker-image
+    params:
+      build: source/ci/docker-image
+
+resources:
+- name: shared-pipeline
+  type: git
+  source:
+    uri: ((shared-pipeline-git-repo-uri))
+    branch: ((shared-pipeline-git-repo-branch))
+    check: true
+    ignore_paths: [README.md]
+    private_key: ((shared-pipeline-git-repo-private-key))
+
+- name: project-pipeline
+  type: git
+  source:
+    uri: ((project-git-repo-uri))
+    branch: ((project-git-repo-branch))
+    check: true
+    paths: [ci/*]
+    ignore_paths: [gradle.properties, README.md]
+    private_key: ((project-git-repo-private-key))
+
+- name: source
+  type: git
+  source:
+    uri: ((project-git-repo-uri))
+    branch: ((project-git-repo-branch))
+    check: true
+    ignore_paths: [README.md]
+    private_key: ((project-git-repo-private-key))
+
+- name: docker-image
+  type: docker-image
+  source:
+    repository: ((docker-image-repository))
+    tag: ((docker-image-tag))
+    username: ((docker-username))
+    password: ((docker-password))
