@@ -30,7 +30,7 @@ fi
 
 name=$(to_lower_case ${name})
 name=$(replace_special_chars_with_dash ${name})
-pipeline_nam=${name}
+pipeline_name=${name}
 
 echo -e "Enter value for Concourse CI ${cyan_color}'concourseTeamName' (default: ${default_concourse_team_name})${no_color}, followed by [ENTER]:"
 read concourse_team_name
