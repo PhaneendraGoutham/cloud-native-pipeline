@@ -75,14 +75,14 @@ else
     github_token=""
 fi
 
-echo -e "Does your cloud-native project use a shared pipeline with previously set up GitHub credentials?"
+echo -e "Does your cloud-native project use a shared pipeline with a previously set up GitHub repo deploy key?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
-read has_shared_pipeline_github_creds
+read has_shared_pipeline_github_deploy_key
 echo ""
 
-has_shared_pipeline_github_creds=`echo $(to_upper_case "${has_shared_pipeline_github_creds}")`
+has_shared_pipeline_github_deploy_key=`echo $(to_upper_case "${has_shared_pipeline_github_deploy_key}")`
 
-if [ "${has_shared_pipeline_github_creds}" == "N" ] ; then
+if [ "${has_shared_pipeline_github_deploy_key}" == "N" ] ; then
     echo -e "Enter value for ${cyan_color}'githubSharedPipelineEmail' (required)${no_color}, followed by [ENTER]:"
     read github_shared_pipeline_email
     echo ""
@@ -95,14 +95,46 @@ else
     github_shared_pipeline_email=""
 fi
 
-echo -e "Does your cloud-native project's pipeline share previously set up GitHub credentials?"
+echo -e "Does your cloud-native project use a shared pipeline with a previously set up GitHub repo and branch?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
-read has_github_project_creds
+read has_github_shared_pipeline_repo_branch
 echo ""
 
-has_github_project_creds=`echo $(to_upper_case "${has_github_project_creds}")`
+has_github_shared_pipeline_repo_branch=`echo $(to_upper_case "${has_github_shared_pipeline_repo_branch}")`
 
-if [ "${has_github_project_creds}" == "N" ] ; then
+if [ "${has_github_shared_pipeline_repo_branch}" == "N" ] ; then
+    echo -e "Enter value for ${cyan_color}'githubSharedPipelineRepo' (required)${no_color}, followed by [ENTER]:"
+    read github_shared_pipeline_repo_uri
+    echo ""
+
+    if [ "${github_shared_pipeline_repo_uri}" == "" ] ; then
+        echo -e "${red_color}ERROR! 'githubSharedPipelineRepo' not entered! Please try again.${no_color}"
+        echo ""
+        exit 1
+    fi
+
+    github_shared_pipeline_repo_uri=$(replace_string ${github_repo_uri} "repo" ${github_shared_pipeline_repo_uri})
+
+    echo -e "Enter value for ${cyan_color}'githubSharedPipelineRepoBranch' (default: ${github_repo_default_branch})${no_color}, followed by [ENTER]:"
+    read github_shared_pipeline_repo_branch
+    echo ""
+
+    if [ "${github_shared_pipeline_repo_branch}" == "" ] ; then
+        github_shared_pipeline_repo_branch=${github_repo_default_branch}
+    fi
+else
+    github_shared_pipeline_repo_uri=""
+    github_shared_pipeline_repo_branch=""
+fi
+
+echo -e "Does your cloud-native project's pipeline share a previously set up GitHub repo deploy key?"
+echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+read has_github_project_deploy_key
+echo ""
+
+has_github_project_deploy_key=`echo $(to_upper_case "${has_github_project_deploy_key}")`
+
+if [ "${has_github_project_deploy_key}" == "N" ] ; then
     echo -e "Enter value for ${cyan_color}'githubProjectEmail' (required)${no_color}, followed by [ENTER]:"
     read github_project_email
     echo ""
@@ -113,6 +145,38 @@ if [ "${has_github_project_creds}" == "N" ] ; then
     fi
 else
     github_project_email=""
+fi
+
+echo -e "Does your cloud-native project's pipeline share a previously set up GitHub repo and branch?"
+echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+read has_github_project_repo_branch
+echo ""
+
+has_github_project_repo_branch=`echo $(to_upper_case "${has_github_project_repo_branch}")`
+
+if [ "${has_github_project_repo_branch}" == "N" ] ; then
+    echo -e "Enter value for ${cyan_color}'githubProjectRepo' (required)${no_color}, followed by [ENTER]:"
+    read github_project_repo_uri
+    echo ""
+
+    if [ "${github_project_repo_uri}" == "" ] ; then
+        echo -e "${red_color}ERROR! 'githubProjectRepo' not entered! Please try again.${no_color}"
+        echo ""
+        exit 1
+    fi
+
+    github_project_repo_uri=$(replace_string ${github_repo_uri} "repo" ${github_project_repo_uri})
+
+    echo -e "Enter value for ${cyan_color}'githubProjectRepoBranch' (default: ${github_repo_default_branch})${no_color}, followed by [ENTER]:"
+    read github_project_repo_branch
+    echo ""
+
+    if [ "${github_project_repo_branch}" == "" ] ; then
+        github_project_repo_branch=${github_repo_default_branch}
+    fi
+else
+    github_project_repo_uri=""
+    github_project_repo_branch=""
 fi
 
 echo -e "Does your cloud-native project need to publish its own Docker image(s)?"
@@ -324,14 +388,22 @@ echo ""
 if [ "${github_user}" != "" ] &&
     [ "${github_token}" != "" ] ||
     [ "${github_shared_pipeline_email}" != "" ] ||
-    [ "${github_project_email}" != "" ]; then
+    [ "${github_shared_pipeline_repo_uri}" != "" ] &&
+    [ "${github_shared_pipeline_repo_branch}" != "" ] ||
+    [ "${github_project_email}" != "" ] ||
+    [ "${github_project_repo_uri}" != "" ] &&
+    [ "${github_project_repo_branch}" != "" ] ; then
     echo -e "${cyan_color}===================================================================================${no_color}"
     echo -e "${cyan_color}GitHub${no_color}"
     echo -e "${cyan_color}===================================================================================${no_color}"
-    echo -e "${cyan_color}             Username: ${github_user}${no_color}"
-    echo -e "${cyan_color}                Token: $(mask_string ${github_token})${no_color}"
-    echo -e "${cyan_color}Shared pipeline email: ${github_shared_pipeline_email}${no_color}"
-    echo -e "${cyan_color}        Project email: ${github_project_email}${no_color}"
+    echo -e "${cyan_color}                  User: ${github_user}${no_color}"
+    echo -e "${cyan_color}                 Token: $(mask_string ${github_token})${no_color}"
+    echo -e "${cyan_color} Shared pipeline email: ${github_shared_pipeline_email}${no_color}"
+    echo -e "${cyan_color}  Shared pipeline repo: ${github_shared_pipeline_repo_uri}${no_color}"
+    echo -e "${cyan_color}Shared pipeline branch: ${github_shared_pipeline_repo_branch}${no_color}"
+    echo -e "${cyan_color}         Project email: ${github_project_email}${no_color}"
+    echo -e "${cyan_color}          Project repo: ${github_project_repo_uri}${no_color}"
+    echo -e "${cyan_color}        Project branch: ${github_project_repo_branch}${no_color}"
     echo -e "${cyan_color}===================================================================================${no_color}"
     echo ""
 fi
@@ -415,9 +487,25 @@ if [ "${pipeline_creds_storage_option}" == "V" ] ; then
         echo ""
     fi
 
+    if [ "${github_shared_pipeline_repo_uri}" != "" ] && [ "${github_shared_pipeline_repo_branch}" != "" ] ; then
+        echo -e "${cyan_color}Storing GitHub repo URI and branch for shared pipeline into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/shared-pipeline-git-repo-uri value="${github_shared_pipeline_repo_uri}"
+        vault write concourse/${concourse_team_name}/shared-pipeline-git-repo-branch value="${github_shared_pipeline_repo_branch}"
+        echo -e "${green_color}Done!${no_color}"
+        echo ""
+    fi
+
     if [ "${github_project_email}" != "" ] ; then
         echo -e "${cyan_color}Storing GitHub private key for project GitHub deploy key into Vault for Concourse CI pipeline...${no_color}"
         vault write concourse/${concourse_team_name}/${pipeline_name}/project-git-repo-private-key value="${project_git_repo_private_key}"
+        echo -e "${green_color}Done!${no_color}"
+        echo ""
+    fi
+
+    if [ "${github_project_repo_uri}" != "" ] && [ "${github_project_repo_branch}" != "" ] ; then
+        echo -e "${cyan_color}Storing GitHub repo URI and branch for project pipeline into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/${pipeline_name}/project-git-repo-uri value="${github_project_repo_uri}"
+        vault write concourse/${concourse_team_name}/${pipeline_name}/project-git-repo-branch value="${github_project_repo_branch}"
         echo -e "${green_color}Done!${no_color}"
         echo ""
     fi
@@ -470,8 +558,12 @@ if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
     echo "pcf-password: ${pcf_password}" >> ${pipeline_credentials_file}
     echo "db-username: ${db_username}" >> ${pipeline_credentials_file}
     echo "db-password: ${db_password}" >> ${pipeline_credentials_file}
+    echo "shared-pipeline-git-repo-uri: ${github_shared_pipeline_repo_uri}" >> ${pipeline_credentials_file}
+    echo "shared-pipeline-git-repo-branch: ${github_shared_pipeline_repo_branch}" >> ${pipeline_credentials_file}
     echo "shared-pipeline-git-repo-private-key: |" >> ${pipeline_credentials_file}
     echo -e "${shared_pipeline_git_repo_private_key}" >> ${pipeline_credentials_file}
+    echo "project-git-repo-uri: ${github_project_repo_uri}" >> ${pipeline_credentials_file}
+    echo "project-git-repo-branch: ${github_project_repo_branch}" >> ${pipeline_credentials_file}
     echo "project-git-repo-private-key: |" >> ${pipeline_credentials_file}
     echo -e "${project_git_repo_private_key}" >> ${pipeline_credentials_file}
     echo -e "${green_color}Done!${no_color}"

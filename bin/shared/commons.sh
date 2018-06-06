@@ -148,6 +148,14 @@ function replace_special_chars_with_whitespace {
     echo ${value}
 }
 
+function replace_string {
+    string="$1"
+    search_string="$2"
+    replace_string="$3"
+    value=`echo ${string} | sed "s/${search_string}/${replace_string}/g"`
+    echo ${value}
+}
+
 function to_lower_case {
     string="$1"
     value=`echo ${string} | awk '{print tolower($0)}'`

@@ -13,6 +13,8 @@ default_pcf_space_name=development
 github_api_uri=https://api.github.com
 github_org=opengood-io
 github_deploy_key_title=Concourse
+github_repo_uri=git@github.com:opengood-io/repo.git
+github_repo_default_branch=master
 
 pipeline_config_file=pipeline.yml
 pipeline_credentials_file=credentials.yml
