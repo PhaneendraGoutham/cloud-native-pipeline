@@ -155,14 +155,12 @@ echo ""
 has_github_project_repo_branch=`echo $(to_upper_case "${has_github_project_repo_branch}")`
 
 if [ "${has_github_project_repo_branch}" == "N" ] ; then
-    echo -e "Enter value for ${cyan_color}'githubProjectRepo' (required)${no_color}, followed by [ENTER]:"
+    echo -e "Enter value for ${cyan_color}'githubProjectRepo' (default: ${name})${no_color}, followed by [ENTER]:"
     read github_project_repo_uri
     echo ""
 
     if [ "${github_project_repo_uri}" == "" ] ; then
-        echo -e "${red_color}ERROR! 'githubProjectRepo' not entered! Please try again.${no_color}"
-        echo ""
-        exit 1
+        github_project_repo_uri=${name}
     fi
 
     github_project_repo_uri=$(replace_string ${github_repo_uri} "repo" ${github_project_repo_uri})
