@@ -105,7 +105,7 @@ else
     github_shared_pipeline_email=""
 fi
 
-echo -e "Does your cloud-native project use a shared pipeline with a previously set up GitHub repo and branch?"
+echo -e "Does your ${yellow_color}cloud-native project${no_color} use a ${yellow_color}shared pipeline${no_color} with a previously set up ${yellow_color}GitHub repo and branch${no_color}?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
 read has_github_shared_pipeline_repo_branch
 echo ""
@@ -137,7 +137,7 @@ else
     github_shared_pipeline_repo_branch=""
 fi
 
-echo -e "Does your cloud-native project's pipeline share a previously set up GitHub repo deploy key?"
+echo -e "Does your ${yellow_color}cloud-native project's pipeline${no_color} share a previously set up ${yellow_color}GitHub repo deploy key${no_color}?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
 read has_github_project_deploy_key
 echo ""
@@ -157,7 +157,7 @@ else
     github_project_email=""
 fi
 
-echo -e "Does your cloud-native project's pipeline share a previously set up GitHub repo and branch?"
+echo -e "Does your ${yellow_color}cloud-native project's pipeline${no_color} share a previously set up ${yellow_color}GitHub repo and branch${no_color}?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
 read has_github_project_repo_branch
 echo ""
@@ -187,7 +187,7 @@ else
     github_project_repo_branch=""
 fi
 
-echo -e "Does your cloud-native project need to publish its own Docker image(s)?"
+echo -e "Does your ${yellow_color}cloud-native project${no_color} need to publish its own ${yellow_color}Docker image(s)${no_color}?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
 read has_docker
 echo ""
@@ -195,7 +195,7 @@ echo ""
 has_docker=`echo $(to_upper_case "${has_docker}")`
 
 if [ "${has_docker}" == "Y" ] ; then
-    echo -e "Does your cloud-native project share previously set up Docker credentials?"
+    echo -e "Does your ${yellow_color}cloud-native project${no_color} share previously set up ${yellow_color}Docker credentials${no_color}?"
     echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
     read has_docker_creds
     echo ""
@@ -231,7 +231,7 @@ else
     docker_password=""
 fi
 
-echo -e "Does your cloud-native project reside on PCF?"
+echo -e "Does your ${yellow_color}cloud-native project${no_color} reside on ${yellow_color}PCF${no_color}?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
 read has_pcf
 echo ""
@@ -239,7 +239,7 @@ echo ""
 has_pcf=`echo $(to_upper_case "${has_pcf}")`
 
 if [ "${has_pcf}" == "Y" ] ; then
-    echo -e "Does your cloud-native project share a previously set up PCF API endpoint, organization, and space?"
+    echo -e "Does your ${yellow_color}cloud-native project${no_color} share a previously set up ${yellow_color}PCF API endpoint, organization, and space${no_color}?"
     echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
     read has_pcf_api_org_space
     echo ""
@@ -282,7 +282,7 @@ if [ "${has_pcf}" == "Y" ] ; then
         pcf_space_name=""
     fi
 
-    echo -e "Does your cloud-native project share previously set up PCF credentials?"
+    echo -e "Does your ${yellow_color}cloud-native project${no_color} share previously set up ${yellow_color}PCF credentials${no_color}?"
     echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
     read has_pcf_creds
     echo ""
@@ -321,7 +321,7 @@ else
     pcf_password=""
 fi
 
-echo -e "Does your cloud-native project have a database?"
+echo -e "Does your ${yellow_color}cloud-native project${no_color} have a ${yellow_color}database${no_color}?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
 read has_db
 echo ""
@@ -329,7 +329,7 @@ echo ""
 has_db=`echo $(to_upper_case "${has_db}")`
 
 if [ "${has_db}" == "Y" ] ; then
-    echo -e "Does your cloud-native project share previously set up database credentials?"
+    echo -e "Does your ${yellow_color}cloud-native project${no_color} share previously set up ${yellow_color}database credentials${no_color}?"
     echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
     read has_db_creds
     echo ""
@@ -365,7 +365,7 @@ else
     db_password=""
 fi
 
-echo -e "Does your cloud-native project need to be published to Maven Central public repository?"
+echo -e "Does your ${yellow_color}cloud-native project${no_color} need to be published to ${yellow_color}Maven Central public artifact repo${no_color}?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
 read has_publish_maven_central_repo
 echo ""
@@ -419,7 +419,7 @@ else
     maven_central_gpg_key_ring_passphrase=""
 fi
 
-echo -e "How do you want to store your project's pipeline credentials?"
+echo -e "How do you want to ${yellow_color}store your project's pipeline credentials${no_color}?"
 echo -e "Enter ${cyan_color}'CY'${no_color} for 'Credentials YAML' and ${cyan_color}'V'${no_color} for Vault or leave blank, followed by [ENTER]:"
 read pipeline_creds_storage_option
 echo ""
