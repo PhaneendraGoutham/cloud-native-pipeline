@@ -567,7 +567,7 @@ if [ "${maven_central_gpg_key_ring_name}" != "" ] &&
         "${gpg_key_expire_date}" \
         "${gpg_key_server}" \
         "${gpg_key_ring_import_file}" \
-        "${maven_central_gpg_private_key_file}"
+        "${maven_central_gpg_private_key_file}" \
         "${maven_central_gpg_public_key_file}"
     maven_central_gpg_private_key=`cat ${maven_central_gpg_private_key_file}`
     maven_central_gpg_public_key=`cat ${maven_central_gpg_public_key_file}`
