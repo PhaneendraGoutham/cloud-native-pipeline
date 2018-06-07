@@ -36,6 +36,53 @@ function delete_github_deploy_key {
     curl -u "${github_user}:${github_token}" -X DELETE "${github_api_uri}/repos/${github_org}/${github_repo}/keys/${github_deploy_key_id}"
 }
 
+function generate_gpg_keys {
+    gpg_dir="$1"
+    gpg_key_type="$2"
+    gpg_key_length="$3"
+    gpg_key_usage="$4"
+    gpg_key_passphrase="$5"
+    gpg_key_ring_name="$6"
+    gpg_key_ring_comment="$7"
+    gpg_key_ring_email="$8"
+    gpg_key_expire_date="$9"
+    gpg_key_server="$10"
+    gpg_key_ring_import_file="$11"
+    gpg_private_key_file="$12"
+    gpg_public_key_file="$13"
+
+    sudo mkdir -p ${gpg_dir}
+    rm -f ${gpg_key_private_key_file}
+    rm -f ${gpg_key_public_key_file}
+
+    echo "Key-Type: ${gpg_key_type}" > ${gpg_key_ring_import_file} >&2
+    echo "Key-Length: ${gpg_key_length}" >> ${gpg_key_ring_import_file} >&2
+    echo "Key-Usage: ${gpg_key_usage}" >> ${gpg_key_ring_import_file} >&2
+    echo "Passphrase: ${gpg_key_passphrase}" >> ${gpg_key_ring_import_file} >&2
+    echo "Name-Real: ${gpg_key_ring_name}" >> ${gpg_key_ring_import_file} >&2
+    echo "Name-Comment: ${gpg_key_ring_comment}" >> ${gpg_key_ring_import_file} >&2
+    echo "Name-Email: ${gpg_key_ring_email}" >> ${gpg_key_ring_import_file} >&2
+    echo "Expire-Date: ${gpg_key_expire_date}" >> ${gpg_key_ring_import_file} >&2
+    echo "Keyserver: ${gpg_key_server}" >> ${gpg_key_ring_import_file} >&2
+
+    gpg2 --gen-key --batch "${gpg_key_ring_import_file}"
+    gpg2 -a --export-secret-keys > "${gpg_key_private_key_file}"
+    gpg2 --armor --export ${gpg_key_ring_email} > "${gpg_key_public_key_file}"
+    rm -f "${gpg_key_ring_import_file}"
+
+    gpg_keys_info=`gpg2 --list-keys`
+    echo ${gpg_keys_info} | while read line ; do
+        if [ $(contains ${line} "pub") == "true" ] ; then
+            gpg_public_key_id=`echo ${line} | sed 's/pub//g'`
+            gpg_public_key_id=`echo ${gpg_public_key_id} | sed 's/ .*//g'`
+        fi
+    done
+
+    if [ "${gpg_public_key_id}" != "" ] ; then
+        gpg2 --keyserver ${gpg_key_server} --send-key ${gpg_public_key_id}
+    fi
+}
+
 function generate_github_ssh_keys {
     ssh_dir="$1"
     ssh_private_key_file="$2"
