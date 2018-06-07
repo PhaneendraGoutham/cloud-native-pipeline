@@ -551,8 +551,8 @@ if [ "${maven_central_gpg_key_ring_name}" != "" ] &&
     [ "${maven_central_gpg_key_ring_comment}" != "" ] &&
     [ "${maven_central_gpg_key_ring_email}" != "" ] &&
     [ "${maven_central_gpg_key_ring_passphrase}" != "" ] ; then
-    maven_central_gpg_private_key_file=$(replace_string ${gpg_key_private_key_file} "name" ${name})
-    maven_central_gpg_public_key_file=$(replace_string ${gpg_key_public_key_file} "name" ${name})
+    maven_central_gpg_private_key_file=$(replace_string ${gpg_key_private_key_file} "name" "maven_central")
+    maven_central_gpg_public_key_file=$(replace_string ${gpg_key_public_key_file} "name" "maven_central")
 
     echo -e "${cyan_color}Generating GPG private/public keys for Maven Central project artifacts repos...${no_color}"
     generate_gpg_keys \

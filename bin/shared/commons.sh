@@ -52,8 +52,8 @@ function generate_gpg_keys {
     gpg_public_key_file="$13"
 
     sudo mkdir -p ${gpg_dir}
-    rm -f ${gpg_key_private_key_file}
-    rm -f ${gpg_key_public_key_file}
+    rm -f ${gpg_private_key_file}
+    rm -f ${gpg_public_key_file}
 
     echo "Key-Type: ${gpg_key_type}" > ${gpg_key_ring_import_file} >&2
     echo "Key-Length: ${gpg_key_length}" >> ${gpg_key_ring_import_file} >&2
@@ -66,8 +66,8 @@ function generate_gpg_keys {
     echo "Keyserver: ${gpg_key_server}" >> ${gpg_key_ring_import_file} >&2
 
     gpg2 --gen-key --batch "${gpg_key_ring_import_file}"
-    gpg2 -a --export-secret-keys > "${gpg_key_private_key_file}"
-    gpg2 --armor --export ${gpg_key_ring_email} > "${gpg_key_public_key_file}"
+    gpg2 -a --export-secret-keys > "${gpg_private_key_file}"
+    gpg2 --armor --export ${gpg_key_ring_email} > "${gpg_public_key_file}"
     rm -f "${gpg_key_ring_import_file}"
 
     gpg_keys_info=`gpg2 --list-keys`
