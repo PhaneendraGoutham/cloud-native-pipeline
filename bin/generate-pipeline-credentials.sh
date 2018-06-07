@@ -53,7 +53,7 @@ fi
 concourse_team_name=$(to_lower_case "${concourse_team_name}")
 concourse_team_name=$(replace_special_chars_with_dash "${concourse_team_name}")
 
-echo -e "Does your cloud-native project share previously set up GitHub credentials?"
+echo -e "Does your ${yellow_color}cloud-native project${no_color} share previously set up ${yellow_color}GitHub credentials${no_color}?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
 read has_github_creds
 echo ""
@@ -85,7 +85,7 @@ else
     github_token=""
 fi
 
-echo -e "Does your cloud-native project use a shared pipeline with a previously set up GitHub repo deploy key?"
+echo -e "Does your ${yellow_color}cloud-native project${no_color} use a ${yellow_color}shared pipeline${no_color} with a previously set up ${yellow_color}GitHub repo deploy key${no_color}?"
 echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
 read has_shared_pipeline_github_deploy_key
 echo ""
