@@ -10,12 +10,12 @@ echo -e "${cyan_color}OpenGood.io Cloud-Native App Concourse CI Pipeline Credent
 echo -e "${cyan_color}*************************************************************************${no_color}"
 echo ""
 
-echo -e "${cyan_color}Installing OS system updates'${no_color}..."
+echo -e "${cyan_color}Installing OS system updates${no_color}..."
 sudo apt-get update
 echo -e "${green_color}Done!${no_color}"
 echo ""
 
-echo -e "${cyan_color}Installing dependencies for credentials generation'${no_color}..."
+echo -e "${cyan_color}Installing dependencies for credentials generation${no_color}..."
 sudo apt-get install gnupg2 -y
 echo -e "${green_color}Done!${no_color}"
 echo ""
