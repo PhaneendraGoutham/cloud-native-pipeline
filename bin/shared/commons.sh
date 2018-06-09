@@ -52,20 +52,19 @@ function generate_gpg_keys {
 
     sudo mkdir -p ${gpg_dir}
 
-    echo "Key-Type: ${gpg_key_type}" > ${gpg_key_ring_import_file}
-    echo "Key-Length: ${gpg_key_length}" >> ${gpg_key_ring_import_file}
-    echo "Key-Usage: ${gpg_key_usage}" >> ${gpg_key_ring_import_file}
-    echo "Passphrase: ${gpg_key_passphrase}" >> ${gpg_key_ring_import_file}
-    echo "Name-Real: ${gpg_key_ring_name}" >> ${gpg_key_ring_import_file}
-    echo "Name-Comment: ${gpg_key_ring_comment}" >> ${gpg_key_ring_import_file}
-    echo "Name-Email: ${gpg_key_ring_email}" >> ${gpg_key_ring_import_file}
-    echo "Expire-Date: ${gpg_key_expire_date}" >> ${gpg_key_ring_import_file}
-    echo "Keyserver: ${gpg_key_server}" >> ${gpg_key_ring_import_file}
-    cat ${gpg_key_ring_import_file}
+    echo "Key-Type: ${gpg_key_type}" > ${gpg_key_ring_import_file} >&2
+    echo "Key-Length: ${gpg_key_length}" >> ${gpg_key_ring_import_file} >&2
+    echo "Key-Usage: ${gpg_key_usage}" >> ${gpg_key_ring_import_file} >&2
+    echo "Passphrase: ${gpg_key_passphrase}" >> ${gpg_key_ring_import_file} >&2
+    echo "Name-Real: ${gpg_key_ring_name}" >> ${gpg_key_ring_import_file} >&2
+    echo "Name-Comment: ${gpg_key_ring_comment}" >> ${gpg_key_ring_import_file} >&2
+    echo "Name-Email: ${gpg_key_ring_email}" >> ${gpg_key_ring_import_file} >&2
+    echo "Expire-Date: ${gpg_key_expire_date}" >> ${gpg_key_ring_import_file} >&2
+    echo "Keyserver: ${gpg_key_server}" >> ${gpg_key_ring_import_file} >&2
 
     echo "gpg2 --gen-key --batch ${gpg_key_ring_import_file}" >&2
     gpg2 --gen-key --batch "${gpg_key_ring_import_file}"
-#    rm -f "${gpg_key_ring_import_file}"
+    rm -f "${gpg_key_ring_import_file}"
 
     gpg_keys_info=`gpg2 --list-keys`
     echo ${gpg_keys_info} | while read line ; do
