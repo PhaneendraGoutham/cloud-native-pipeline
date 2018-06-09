@@ -21,7 +21,7 @@ gpg_key_type=default
 gpg_key_length=2048
 gpg_key_usage=encrypt,sign,auth
 gpg_key_expire_date=0
-gpg_key_server=https://keys.gnupg.net
+gpg_key_server=keys.gnupg.net
 gpg_key_ring_import_file=${gpg_dir}/gnupg-key.import
 gpg_secret_keys_file=${gpg_dir}/secret-keys.gpg
 
