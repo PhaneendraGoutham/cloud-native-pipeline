@@ -63,9 +63,9 @@ function generate_gpg_keys {
     echo "Keyserver: ${gpg_key_server}" >> ${gpg_key_ring_import_file}
     cat ${gpg_key_ring_import_file}
 
-    echo "gpg2 --gen-key --batch \"${gpg_key_ring_import_file}\"" >&2
+    echo "gpg2 --gen-key --batch ${gpg_key_ring_import_file}" >&2
     gpg2 --gen-key --batch "${gpg_key_ring_import_file}"
-    rm -f "${gpg_key_ring_import_file}"
+#    rm -f "${gpg_key_ring_import_file}"
 
     gpg_keys_info=`gpg2 --list-keys`
     echo ${gpg_keys_info} | while read line ; do
