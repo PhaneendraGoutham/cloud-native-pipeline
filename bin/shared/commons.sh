@@ -61,7 +61,9 @@ function generate_gpg_keys {
     echo "Name-Email: ${gpg_key_ring_email}" >> ${gpg_key_ring_import_file}
     echo "Expire-Date: ${gpg_key_expire_date}" >> ${gpg_key_ring_import_file}
     echo "Keyserver: ${gpg_key_server}" >> ${gpg_key_ring_import_file}
+    cat ${gpg_key_ring_import_file}
 
+    echo "gpg2 --gen-key --batch \"${gpg_key_ring_import_file}\"" >&2
     gpg2 --gen-key --batch "${gpg_key_ring_import_file}"
     rm -f "${gpg_key_ring_import_file}"
 
@@ -70,13 +72,16 @@ function generate_gpg_keys {
         if [ $(contains ${line} "pub") == "true" ] ; then
             gpg_public_key_id=`echo ${line} | sed 's/pub//g'`
             gpg_public_key_id=`echo ${gpg_public_key_id} | sed 's/ .*//g'`
+            echo "GPG public key ID: ${gpg_public_key_id}" >&2
         fi
     done
 
     if [ "${gpg_public_key_id}" != "" ] ; then
+        echo "gpg2 --keyserver ${gpg_key_server} --send-key ${gpg_public_key_id}" >&2
         gpg2 --keyserver ${gpg_key_server} --send-key ${gpg_public_key_id}
     fi
 
+    echo "gpg2 --export-secret-keys ${gpg_public_key_id} > ${gpg_secret_keys_file}" >&2
     gpg2 --export-secret-keys ${gpg_public_key_id} > ${gpg_secret_keys_file}
 }
 
