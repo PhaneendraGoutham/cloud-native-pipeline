@@ -16,15 +16,14 @@ github_deploy_key_title=Concourse
 github_repo_uri=git@github.com:opengood-io/repo.git
 github_repo_default_branch=master
 
-gpg_dir=/.gnupg
+gpg_dir=~/.gnupg
 gpg_key_type=default
 gpg_key_length=2048
 gpg_key_usage=encrypt,sign,auth
 gpg_key_expire_date=0
-gpg_key_server=keys.gnupg.net
-gpg_key_ring_import_file=${gpg_dir}/gnupg_import
-gpg_key_private_key_file=${gpg_dir}/name_gpg_private_key.asc
-gpg_key_public_key_file=${gpg_dir}/name_gpg_public_key.asc
+gpg_key_server=https://keys.gnupg.net
+gpg_key_ring_import_file=${gpg_dir}/gnupg-key.import
+gpg_secret_keys_file=${gpg_dir}/secret-keys.gpg
 
 pipeline_config_file=pipeline.yml
 pipeline_credentials_file=credentials.yml

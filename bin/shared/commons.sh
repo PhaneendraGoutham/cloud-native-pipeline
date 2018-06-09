@@ -48,12 +48,9 @@ function generate_gpg_keys {
     gpg_key_expire_date="$9"
     gpg_key_server="$10"
     gpg_key_ring_import_file="$11"
-    gpg_private_key_file="$12"
-    gpg_public_key_file="$13"
+    gpg_secret_keys_file="$12"
 
     sudo mkdir -p ${gpg_dir}
-    rm -f ${gpg_private_key_file}
-    rm -f ${gpg_public_key_file}
 
     echo "Key-Type: ${gpg_key_type}" > ${gpg_key_ring_import_file}
     echo "Key-Length: ${gpg_key_length}" >> ${gpg_key_ring_import_file}
@@ -66,8 +63,6 @@ function generate_gpg_keys {
     echo "Keyserver: ${gpg_key_server}" >> ${gpg_key_ring_import_file}
 
     gpg2 --gen-key --batch "${gpg_key_ring_import_file}"
-    gpg2 -a --export-secret-keys > "${gpg_private_key_file}"
-    gpg2 --armor --export ${gpg_key_ring_email} > "${gpg_public_key_file}"
     rm -f "${gpg_key_ring_import_file}"
 
     gpg_keys_info=`gpg2 --list-keys`
@@ -81,6 +76,8 @@ function generate_gpg_keys {
     if [ "${gpg_public_key_id}" != "" ] ; then
         gpg2 --keyserver ${gpg_key_server} --send-key ${gpg_public_key_id}
     fi
+
+    gpg2 --export-secret-keys ${gpg_public_key_id} > ${gpg_secret_keys_file}
 }
 
 function generate_github_ssh_keys {

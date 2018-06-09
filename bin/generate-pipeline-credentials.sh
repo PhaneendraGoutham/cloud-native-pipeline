@@ -373,46 +373,94 @@ echo ""
 has_publish_maven_central_repo=`echo $(to_upper_case "${has_publish_maven_central_repo}")`
 
 if [ "${has_publish_maven_central_repo}" == "Y" ] ; then
-    echo -e "Enter value for ${cyan_color}'mavenCentralGpgKeyRingName' (required)${no_color}, followed by [ENTER]:"
-    read maven_central_gpg_key_ring_name
+    echo -e "Does your ${yellow_color}cloud-native project${no_color} share previously set up ${yellow_color}Maven Central credentials${no_color}?"
+    echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+    read has_maven_central_creds
     echo ""
 
-    if [ "${maven_central_gpg_key_ring_name}" == "" ] ; then
-        echo -e "${red_color}ERROR! 'mavenCentralGpgKeyRingName' not entered! Please try again.${no_color}"
+    has_maven_central_creds=`echo $(to_upper_case "${has_maven_central_creds}")`
+
+    if [ "${has_maven_central_creds}" == "N" ] ; then
+        echo -e "Enter value for ${cyan_color}'dbUserName' (required)${no_color}, followed by [ENTER]:"
+        read maven_central_username
         echo ""
-        exit 1
+
+        if [ "${maven_central_username}" == "" ] ; then
+            echo -e "${red_color}ERROR! 'mavenCentralUserName' not entered! Please try again.${no_color}"
+            echo ""
+            exit 1
+        fi
+
+        echo -e "Enter value for ${cyan_color}'mavenCentralPassword' (required)${no_color}, followed by [ENTER]:"
+        maven_central_password=$(read_password_input)
+        echo ""
+
+        if [ "${maven_central_password}" == "" ] ; then
+            echo -e "${red_color}ERROR! 'mavenCentralPassword' not entered! Please try again.${no_color}"
+            echo ""
+            exit 1
+        fi
+    else
+        maven_central_username=""
+        maven_central_password=""
     fi
 
-    echo -e "Enter value for ${cyan_color}'mavenCentralGpgKeyRingComment' (required)${no_color}, followed by [ENTER]:"
-    read maven_central_gpg_key_ring_comment
+    echo -e "Does your ${yellow_color}cloud-native project${no_color} share previously set up ${yellow_color}Maven Central GPG key ring${no_color}?"
+    echo -e "Enter ${cyan_color}'Y'${no_color} for Yes and ${cyan_color}'N'${no_color} for No or leave blank, followed by [ENTER]:"
+    read has_maven_central_gpg_key_ring
     echo ""
 
-    if [ "${maven_central_gpg_key_ring_comment}" == "" ] ; then
-        echo -e "${red_color}ERROR! 'mavenCentralGpgKeyRingComment' not entered! Please try again.${no_color}"
+    has_maven_central_gpg_key_ring=`echo $(to_upper_case "${has_maven_central_gpg_key_ring}")`
+
+    if [ "${has_maven_central_gpg_key_ring}" == "N" ] ; then
+        echo -e "Enter value for ${cyan_color}'mavenCentralGpgKeyRingName' (required)${no_color}, followed by [ENTER]:"
+        read maven_central_gpg_key_ring_name
         echo ""
-        exit 1
-    fi
 
-    echo -e "Enter value for ${cyan_color}'mavenCentralGpgKeyRingEmail' (required)${no_color}, followed by [ENTER]:"
-    read maven_central_gpg_key_ring_email
-    echo ""
+        if [ "${maven_central_gpg_key_ring_name}" == "" ] ; then
+            echo -e "${red_color}ERROR! 'mavenCentralGpgKeyRingName' not entered! Please try again.${no_color}"
+            echo ""
+            exit 1
+        fi
 
-    if [ "${maven_central_gpg_key_ring_email}" == "" ] ; then
-        echo -e "${red_color}ERROR! 'mavenCentralGpgKeyRingEmail' not entered! Please try again.${no_color}"
+        echo -e "Enter value for ${cyan_color}'mavenCentralGpgKeyRingComment' (required)${no_color}, followed by [ENTER]:"
+        read maven_central_gpg_key_ring_comment
         echo ""
-        exit 1
-    fi
 
-    echo -e "Enter value for ${cyan_color}'mavenCentralGpgKeyRingPassphrase' (required)${no_color}, followed by [ENTER]:"
-    maven_central_gpg_key_ring_passphrase=$(read_password_input)
-    echo ""
+        if [ "${maven_central_gpg_key_ring_comment}" == "" ] ; then
+            echo -e "${red_color}ERROR! 'mavenCentralGpgKeyRingComment' not entered! Please try again.${no_color}"
+            echo ""
+            exit 1
+        fi
 
-    if [ "${maven_central_gpg_key_ring_passphrase}" == "" ] ; then
-        echo -e "${red_color}ERROR! 'mavenCentralGpgKeyRingPassphrase' not entered! Please try again.${no_color}"
+        echo -e "Enter value for ${cyan_color}'mavenCentralGpgKeyRingEmail' (required)${no_color}, followed by [ENTER]:"
+        read maven_central_gpg_key_ring_email
         echo ""
-        exit 1
+
+        if [ "${maven_central_gpg_key_ring_email}" == "" ] ; then
+            echo -e "${red_color}ERROR! 'mavenCentralGpgKeyRingEmail' not entered! Please try again.${no_color}"
+            echo ""
+            exit 1
+        fi
+
+        echo -e "Enter value for ${cyan_color}'mavenCentralGpgKeyRingPassphrase' (required)${no_color}, followed by [ENTER]:"
+        maven_central_gpg_key_ring_passphrase=$(read_password_input)
+        echo ""
+
+        if [ "${maven_central_gpg_key_ring_passphrase}" == "" ] ; then
+            echo -e "${red_color}ERROR! 'mavenCentralGpgKeyRingPassphrase' not entered! Please try again.${no_color}"
+            echo ""
+            exit 1
+        fi
+    else
+        maven_central_gpg_key_ring_name=""
+        maven_central_gpg_key_ring_comment=""
+        maven_central_gpg_key_ring_email=""
+        maven_central_gpg_key_ring_passphrase=""
     fi
 else
+    maven_central_username=""
+    maven_central_password=""
     maven_central_gpg_key_ring_name=""
     maven_central_gpg_key_ring_comment=""
     maven_central_gpg_key_ring_email=""
@@ -504,13 +552,17 @@ if [ "${db_username}" != "" ] && [ "${db_password}" != "" ] ; then
     echo ""
 fi
 
-if [ "${maven_central_gpg_key_ring_name}" != "" ] && \
+if [ "${maven_central_username}" != "" ] && \
+    [ "${maven_central_password}" != "" ] || \
+    [ "${maven_central_gpg_key_ring_name}" != "" ] && \
     [ "${maven_central_gpg_key_ring_comment}" != "" ] && \
     [ "${maven_central_gpg_key_ring_email}" != "" ] && \
     [ "${maven_central_gpg_key_ring_passphrase}" != "" ]; then
     echo -e "${cyan_color}===================================================================================${no_color}"
     echo -e "${cyan_color}Maven Central${no_color}"
     echo -e "${cyan_color}===================================================================================${no_color}"
+    echo -e "${cyan_color}               Username: ${maven_central_username}${no_color}"
+    echo -e "${cyan_color}               Password: $(mask_string ${maven_central_password})${no_color}"
     echo -e "${cyan_color}      GPG key ring name: ${maven_central_gpg_key_ring_name}${no_color}"
     echo -e "${cyan_color}   GPG key ring comment: ${maven_central_gpg_key_ring_comment}${no_color}"
     echo -e "${cyan_color}     GAG key ring email: ${maven_central_gpg_key_ring_email}${no_color}"
@@ -551,9 +603,6 @@ if [ "${maven_central_gpg_key_ring_name}" != "" ] &&
     [ "${maven_central_gpg_key_ring_comment}" != "" ] &&
     [ "${maven_central_gpg_key_ring_email}" != "" ] &&
     [ "${maven_central_gpg_key_ring_passphrase}" != "" ] ; then
-    maven_central_gpg_private_key_file=$(replace_string ${gpg_key_private_key_file} "name" "maven_central")
-    maven_central_gpg_public_key_file=$(replace_string ${gpg_key_public_key_file} "name" "maven_central")
-
     echo -e "${cyan_color}Generating GPG private/public keys for Maven Central project artifacts repos...${no_color}"
     generate_gpg_keys \
         "${gpg_dir}" \
@@ -567,10 +616,8 @@ if [ "${maven_central_gpg_key_ring_name}" != "" ] &&
         "${gpg_key_expire_date}" \
         "${gpg_key_server}" \
         "${gpg_key_ring_import_file}" \
-        "${maven_central_gpg_private_key_file}" \
-        "${maven_central_gpg_public_key_file}"
-    maven_central_gpg_private_key=`cat ${maven_central_gpg_private_key_file}`
-    maven_central_gpg_public_key=`cat ${maven_central_gpg_public_key_file}`
+        "${gpg_secret_keys_file}"
+    maven_central_gpg_secret_keys=`cat ${gpg_secret_keys_file}`
     echo -e "${green_color}Done!${no_color}"
     echo ""
 fi
@@ -647,13 +694,19 @@ if [ "${pipeline_creds_storage_option}" == "V" ] ; then
         echo ""
     fi
 
+    if [ "${maven_central_username}" != "" ] && [ "${maven_central_password}" != "" ] ; then
+        echo -e "${cyan_color}Storing Maven Central credentials into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/${pipeline_name}/maven-central-username value=${maven_central_username}
+        vault write concourse/${concourse_team_name}/${pipeline_name}/maven-central-password value=${maven_central_password}
+        echo -e "${green_color}Done!${no_color}"
+        echo ""
+    fi
+
     if [ "${maven_central_gpg_key_ring_passphrase}" != "" ] &&
-        [ "${maven_central_gpg_private_key}" != "" ] &&
-        [ "${maven_central_gpg_public_key}" != "" ] ; then
+        [ "${maven_central_gpg_secret_keys}" != "" ] ; then
         echo -e "${cyan_color}Storing Maven Central GPG key passphrase and private/public keys into Vault for Concourse CI pipeline...${no_color}"
         vault write concourse/${concourse_team_name}/maven-central-gpg-key-passphrase value=${maven_central_gpg_key_ring_passphrase}
-        vault write concourse/${concourse_team_name}/maven-central-gpg-private-key value=${maven_central_gpg_private_key}
-        vault write concourse/${concourse_team_name}/maven-central-gpg-public-key value=${maven_central_gpg_public_key}
+        vault write concourse/${concourse_team_name}/maven-central-gpg-secret-keys value=${maven_central_gpg_secret_keys}
         echo -e "${green_color}Done!${no_color}"
         echo ""
     fi
@@ -683,11 +736,11 @@ if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
     echo "project-git-repo-branch: ${github_project_repo_branch}" >> ${pipeline_credentials_file}
     echo "project-git-repo-private-key: |" >> ${pipeline_credentials_file}
     echo -e "${project_git_repo_private_key}" >> ${pipeline_credentials_file}
+    echo "maven_central-username: ${maven_central_username}" >> ${pipeline_credentials_file}
+    echo "maven_central-password: ${maven_central_password}" >> ${pipeline_credentials_file}
     echo "maven-central-gpg-key-passphrase: ${maven_central_gpg_key_ring_passphrase}" >> ${pipeline_credentials_file}
-    echo "maven-central-gpg-private-key: |" >> ${pipeline_credentials_file}
-    echo -e "${maven_central_gpg_private_key}" >> ${pipeline_credentials_file}
-    echo "maven-central-gpg-public-key: |" >> ${pipeline_credentials_file}
-    echo -e "${maven_central_gpg_public_key}" >> ${pipeline_credentials_file}
+    echo "maven-central-gpg-secret-keys: |" >> ${pipeline_credentials_file}
+    echo -e "${maven_central_gpg_secret_keys}" >> ${pipeline_credentials_file}
 
     echo -e "${green_color}Done!${no_color}"
     echo ""
