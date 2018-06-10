@@ -64,25 +64,25 @@ function generate_gpg_keys() {
     echo "Expire-Date: ${gpg_key_expire_date}" >> ${gpg_key_ring_import_file}
     echo "Keyserver: ${gpg_key_server}" >> ${gpg_key_ring_import_file}
 
-    gpg2 --gen-key --batch ${gpg_key_ring_import_file}
+    gpg --gen-key --batch ${gpg_key_ring_import_file}
     rm -f "${gpg_key_ring_import_file}"
 
-    gpg_keys_info=`gpg2 --list-keys`
+    gpg_keys_info=`gpg --list-keys`
     read -ra gpg_keys_data <<< ${gpg_keys_info}
     for index in "${!gpg_keys_data[@]}"
     do
         gpg_keys_data_value="${gpg_keys_data[index]}"
         if [ $(contains ${gpg_keys_data_value} ${gpg_key_ring_name}) == "true" ] ; then
-            gpg_public_key_id_index=$((${index} - 6))
+            gpg_public_key_id_index=$((${index} - 3))
             gpg_public_key_id=`echo "${gpg_keys_data[gpg_public_key_id_index]}" | sed 's/ //g'`
             break
         fi
     done
 
     if [ "${gpg_public_key_id}" != "" ] ; then
-        gpg2 --keyserver ${gpg_key_server} --send-key ${gpg_public_key_id}
+        gpg --keyserver ${gpg_key_server} --send-key ${gpg_public_key_id}
         echo ${gpg_key_passphrase} > ${gpg_passphrase_file}
-        gpg2 --passphrase-fd ${gpg_passphrase_file} --export-secret-keys -a ${gpg_public_key_id} > ${gpg_secret_keys_file}
+        gpg --passphrase-fd ${gpg_passphrase_file} --export-secret-keys -a ${gpg_public_key_id} > ${gpg_secret_keys_file}
         rm -f ${gpg_passphrase_file}
     fi
 }
