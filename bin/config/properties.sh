@@ -39,5 +39,5 @@ app_pipeline_parameters_file=${shared_pipeline_project_dir}/app-parameters.yml
 docker_pipeline_config_file=${shared_pipeline_project_dir}/docker-pipeline.yml
 docker_pipeline_parameters_file=${shared_pipeline_project_dir}/docker-parameters.yml
 
-ssh_dir=/.ssh
+ssh_dir=~/.ssh
 ssh_key_size=4096

@@ -95,7 +95,7 @@ function generate_github_ssh_keys {
     local ssh_key_size=$4
     local github_email="$5"
 
-    sudo mkdir -p ${ssh_dir}
+    mkdir -p ${ssh_dir}
     cd ${ssh_dir}
     rm -f ${ssh_private_key_file}
     rm -f ${ssh_public_key_file}
