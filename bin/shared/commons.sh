@@ -73,8 +73,9 @@ function generate_gpg_keys() {
     do
         gpg_keys_data_value="${gpg_keys_data[index]}"
         if [ $(contains ${gpg_keys_data_value} ${gpg_key_ring_name}) == "true" ] ; then
-            gpg_public_key_id_index=$((${index} - 3))
+            gpg_public_key_id_index=$((${index} - 6))
             gpg_public_key_id=`echo "${gpg_keys_data[gpg_public_key_id_index]}" | sed 's/ //g'`
+            gpg_public_key_id=`echo "${gpg_public_key_id}" | sed 's/.*\///g'`
             break
         fi
     done
