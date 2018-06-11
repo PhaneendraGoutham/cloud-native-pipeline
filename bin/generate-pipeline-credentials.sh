@@ -371,7 +371,7 @@ if [ "${has_publish_maven_central_repo}" == "Y" ] ; then
     has_maven_central_creds=`echo $(to_upper_case "${has_maven_central_creds}")`
 
     if [ "${has_maven_central_creds}" == "N" ] ; then
-        echo -e "Enter value for ${cyan_color}'dbUserName' (required)${no_color}, followed by [ENTER]:"
+        echo -e "Enter value for ${cyan_color}'mavenCentralUserName' (required)${no_color}, followed by [ENTER]:"
         read maven_central_username
         echo ""
 
