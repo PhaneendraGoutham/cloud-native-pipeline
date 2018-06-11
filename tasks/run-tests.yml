@@ -1,6 +1,9 @@
 ---
 platform: linux
 
+params:
+  env: dev
+
 inputs:
 - name: shared-pipeline
 - name: custom-pipeline

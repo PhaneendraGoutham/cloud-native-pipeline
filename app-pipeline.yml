@@ -23,7 +23,12 @@ jobs:
     file: shared-pipeline/tasks/publish.yml
     params:
       github_private_key: ((project-git-repo-private-key))
-      artifact_repo_uri: ((artifact_snapshots_repo_uri))
+      artifact_repo_uri: ((artifact-snapshots-repo-uri))
+      artifact_repo_username: ((maven-central-username))
+      artifact_repo_password: ((maven-central-password))
+      artifact_repo_signing_key_id: ((maven-central-gpg-key-id))
+      artifact_repo_signing_key_passphrase: ((maven-central-gpg-key-passphrase))
+      artifact_repo_signing_key_secret_keys: ((maven-central-gpg-secret-keys))
 
 - name: deploy-blue
   plan:
@@ -37,7 +42,7 @@ jobs:
     image: cf-cli-image
     file: shared-pipeline/tasks/deploy-blue.yml
     params:
-      artifact_repo_uri: ((artifact_snapshots_repo_uri))
+      artifact_repo_uri: ((artifact-snapshots-repo-uri))
       pcf_app_name: ((pcf-app-name))
       pcf_api_endpoint: ((pcf-api-endpoint))
       pcf_org_name: ((pcf-org-name))

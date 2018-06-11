@@ -9,6 +9,11 @@ params:
   git_email: concourse@opengood.io
   artifact_repo_uri: No Artifact Repo URI
   artifact_repo_id: snapshots
+  artifact_repo_username: No Artifact Repo UserName
+  artifact_repo_password: No Artifact Repo Password
+  artifact_repo_signing_key_id: No Artifact Repo Signing Key ID
+  artifact_repo_signing_key_passphrase: No Artifact Repo Signing Passphrase
+  artifact_repo_signing_key_secret_keys: No Artifact Repo Signing Secret Keys
 
 inputs:
 - name: shared-pipeline
