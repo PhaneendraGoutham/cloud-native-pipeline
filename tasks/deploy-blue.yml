@@ -14,7 +14,7 @@ params:
 
 inputs:
 - name: shared-pipeline
-- name: custom-pipeline
+- name: project-pipeline
 - name: source-code
 
 run:
