@@ -3,12 +3,6 @@ platform: linux
 
 params:
   env: dev
-  github_private_key: No Private Key
-  github_host: github.com
-  git_user: CI Bot
-  git_email: concourse@opengood.io
-  artifact_repo_uri: No Artifact Repo URI
-  artifact_repo_id: snapshots
   artifact_repo_username: No Artifact Repo UserName
   artifact_repo_password: No Artifact Repo Password
   artifact_repo_signing_key_id: No Artifact Repo Signing Key ID
