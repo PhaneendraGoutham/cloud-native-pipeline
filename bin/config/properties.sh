@@ -17,6 +17,7 @@ github_repo_uri=git@github.com:opengood-io/repo.git
 github_repo_default_branch=master
 
 gpg_dir=~/.gnupg
+gpg_absolute_dir=`eval "${gpg_dir}"`
 gpg_key_type=default
 gpg_key_length=2048
 gpg_key_usage=encrypt,sign,auth
@@ -24,7 +25,7 @@ gpg_key_expire_date=365
 gpg_key_server=https://keys.gnupg.net
 gpg_key_ring_import_file=${gpg_dir}/gng-key.import
 gpg_passphrase_file=${gpg_dir}/gpg-passphrase.txt
-gpg_secret_keys_file=${gpg_dir}/secret-keys.gpg
+gpg_secret_keys_file=${gpg_absolute_dir}/secret-keys.gpg
 
 pipeline_config_file=pipeline.yml
 pipeline_credentials_file=credentials.yml

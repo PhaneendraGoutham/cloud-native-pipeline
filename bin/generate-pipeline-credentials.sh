@@ -697,7 +697,7 @@ if [ "${pipeline_creds_storage_option}" == "V" ] ; then
         [ "${maven_central_gpg_secret_keys}" != "" ] ; then
         echo -e "${cyan_color}Storing Maven Central GPG key passphrase and private/public keys into Vault for Concourse CI pipeline...${no_color}"
         vault write concourse/${concourse_team_name}/maven-central-gpg-key-passphrase value=${maven_central_gpg_key_ring_passphrase}
-        vault write concourse/${concourse_team_name}/maven-central-gpg-secret-keys value=${maven_central_gpg_secret_keys}
+        vault write concourse/${concourse_team_name}/maven-central-gpg-secret-keys value=@${gpg_secret_keys_file}
         echo -e "${green_color}Done!${no_color}"
         echo ""
     fi
