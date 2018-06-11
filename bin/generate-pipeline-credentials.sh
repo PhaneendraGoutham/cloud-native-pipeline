@@ -687,8 +687,8 @@ if [ "${pipeline_creds_storage_option}" == "V" ] ; then
 
     if [ "${maven_central_username}" != "" ] && [ "${maven_central_password}" != "" ] ; then
         echo -e "${cyan_color}Storing Maven Central credentials into Vault for Concourse CI pipeline...${no_color}"
-        vault write concourse/${concourse_team_name}/${pipeline_name}/maven-central-username value=${maven_central_username}
-        vault write concourse/${concourse_team_name}/${pipeline_name}/maven-central-password value=${maven_central_password}
+        vault write concourse/${concourse_team_name}/maven-central-username value=${maven_central_username}
+        vault write concourse/${concourse_team_name}/maven-central-password value=${maven_central_password}
         echo -e "${green_color}Done!${no_color}"
         echo ""
     fi
