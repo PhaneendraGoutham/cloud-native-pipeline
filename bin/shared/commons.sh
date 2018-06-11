@@ -85,6 +85,7 @@ function generate_gpg_keys() {
         echo ${gpg_key_passphrase} > ${gpg_passphrase_file}
         gpg2 --passphrase-fd ${gpg_passphrase_file} --export-secret-keys -a ${gpg_public_key_id} > ${gpg_secret_keys_file}
         rm -f ${gpg_passphrase_file}
+        echo ${gpg_public_key_id}
     fi
 }
 

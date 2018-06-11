@@ -594,7 +594,7 @@ if [ "${maven_central_gpg_key_ring_name}" != "" ] &&
     [ "${maven_central_gpg_key_ring_email}" != "" ] &&
     [ "${maven_central_gpg_key_ring_passphrase}" != "" ] ; then
     echo -e "${cyan_color}Generating GPG private/public keys for Maven Central project artifacts repos...${no_color}"
-    generate_gpg_keys \
+    maven_central_gpg_key_id=$(generate_gpg_keys \
         "${gpg_dir}" \
         "${gpg_key_type}" \
         "${gpg_key_length}" \
@@ -607,7 +607,7 @@ if [ "${maven_central_gpg_key_ring_name}" != "" ] &&
         "${gpg_key_server}" \
         "${gpg_key_ring_import_file}" \
         "${gpg_passphrase_file}" \
-        "${gpg_secret_keys_file}"
+        "${gpg_secret_keys_file}")
     maven_central_gpg_secret_keys=`cat ${gpg_secret_keys_file}`
     echo -e "${green_color}Done!${no_color}"
     echo ""
@@ -693,9 +693,11 @@ if [ "${pipeline_creds_storage_option}" == "V" ] ; then
         echo ""
     fi
 
-    if [ "${maven_central_gpg_key_ring_passphrase}" != "" ] &&
+    if [ "${maven_central_gpg_key_id}" != "" ] &&
+        [ "${maven_central_gpg_key_ring_passphrase}" != "" ] &&
         [ "${maven_central_gpg_secret_keys}" != "" ] ; then
         echo -e "${cyan_color}Storing Maven Central GPG key passphrase and private/public keys into Vault for Concourse CI pipeline...${no_color}"
+        vault write concourse/${concourse_team_name}/maven-central-gpg-key-id value=${maven_central_gpg_key_id}
         vault write concourse/${concourse_team_name}/maven-central-gpg-key-passphrase value=${maven_central_gpg_key_ring_passphrase}
         vault write concourse/${concourse_team_name}/maven-central-gpg-secret-keys value=@${gpg_secret_keys_file}
         echo -e "${green_color}Done!${no_color}"
@@ -729,6 +731,7 @@ if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
     echo -e "${project_git_repo_private_key}" >> ${pipeline_credentials_file}
     echo "maven_central-username: ${maven_central_username}" >> ${pipeline_credentials_file}
     echo "maven_central-password: ${maven_central_password}" >> ${pipeline_credentials_file}
+    echo "maven-central-gpg-key-id: ${maven_central_gpg_key_id}" >> ${pipeline_credentials_file}
     echo "maven-central-gpg-key-passphrase: ${maven_central_gpg_key_ring_passphrase}" >> ${pipeline_credentials_file}
     echo "maven-central-gpg-secret-keys: |" >> ${pipeline_credentials_file}
     echo -e "${maven_central_gpg_secret_keys}" >> ${pipeline_credentials_file}
