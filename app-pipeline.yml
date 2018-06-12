@@ -22,6 +22,7 @@ jobs:
     image: cloud-native-image
     file: shared-pipeline/tasks/publish.yml
     params:
+      project_dir: ((project-dir))
       artifact_repo_username: ((maven-central-username))
       artifact_repo_password: ((maven-central-password))
       artifact_repo_signing_key_id: ((maven-central-gpg-key-id))

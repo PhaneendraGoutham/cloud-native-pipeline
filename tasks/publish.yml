@@ -3,6 +3,7 @@ platform: linux
 
 params:
   env: dev
+  project_dir: No Project Directory
   artifact_repo_username: No Artifact Repo UserName
   artifact_repo_password: No Artifact Repo Password
   artifact_repo_signing_key_id: No Artifact Repo Signing Key ID
