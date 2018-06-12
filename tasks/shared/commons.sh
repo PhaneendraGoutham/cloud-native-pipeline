@@ -3,42 +3,54 @@ set -e -x -u
 
 function get_artifact_file {
     local artifact_id="$1"
-    artifact_file=`find $(pwd) -name ${artifact_id}*jar`
+    local artifact_file=`find $(pwd) -name ${artifact_id}*jar`
     echo ${artifact_file}
 }
 
 function get_artifact_id {
-    artifact_id=`awk '/rootProject.name/{print $NF}' settings.gradle | sed s/\'//g`
+    local artifact_id=`awk '/rootProject.name/{print $NF}' settings.gradle | sed s/\'//g`
     echo ${artifact_id}
 }
 
+function get_cd_up_path {
+    local dir="$1"
+    local character='/'
+    local count=`echo "${dir}" | awk -F"${character}" '{print NF-1}'`
+
+    for ((i = 1; i <= ${count}; i++));
+    do
+       path="${path}../"
+    done
+    echo ${path}
+}
+
 function get_current_date {
-    date=`TZ="America/New_York" date "+%Y-%m-%d"`
+    local date=`TZ="America/New_York" date "+%Y-%m-%d"`
     echo ${date}
 }
 
 function get_current_timestamp {
-    timestamp=`TZ="America/New_York" date +"%F %T"`
+    local timestamp=`TZ="America/New_York" date +"%F %T"`
     echo ${timestamp}
 }
 
 function get_group_id {
-    group_id=`awk '/group/{print $NF}' build.gradle | sed s/\'//g`
+    local group_id=`awk '/group/{print $NF}' build.gradle | sed s/\'//g`
     echo ${group_id}
 }
 
 function get_group_id_path {
-    group_id_path=`awk '/group/{print $NF}' build.gradle | sed s/\'//g | tr "." "/"`
+    local group_id_path=`awk '/group/{print $NF}' build.gradle | sed s/\'//g | tr "." "/"`
     echo ${group_id_path}
 }
 
 function get_json_content_type {
-    content_type="Content-Type:application/json"
+    local content_type="Content-Type:application/json"
     echo ${content_type}
 }
 
 function get_version {
-    version=`sed 's/version=//g' gradle.properties | sed s/-SNAPSHOT//g`
+    local version=`sed 's/version=//g' gradle.properties | sed s/-SNAPSHOT//g`
     echo ${version}
 }
 
@@ -71,8 +83,8 @@ function pcf_create_service {
 
 function pcf_create_service_registry {
     local pcf_service_registry_name="$1"
-    pcf_service_type=p-service-registry standard
-    pcf_service_plan=standard
+    local pcf_service_type=p-service-registry standard
+    local pcf_service_plan=standard
     cf service ${pcf_service_registry_name} || { \
     echo "Service Registry ${pcf_service_registry_name} not found. Creating new one..." >&2; \
     cf cs ${pcf_service_type} ${pcf_service_plan} ${pcf_service_registry_name}; \

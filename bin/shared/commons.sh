@@ -21,7 +21,7 @@ function create_github_deploy_key {
     local github_deploy_key="$7"
     local github_deploy_key_read_only=$8
 
-    json="{ \"title\": \"${github_deploy_key_title}\", \"key\": \"${github_deploy_key}\", \"read_only\": ${github_deploy_key_read_only} }"
+    local json="{ \"title\": \"${github_deploy_key_title}\", \"key\": \"${github_deploy_key}\", \"read_only\": ${github_deploy_key_read_only} }"
     curl -u "${github_user}:${github_token}" -d "${json}" -X POST "${github_api_uri}/repos/${github_org}/${github_repo}/keys"
 }
 
@@ -67,11 +67,11 @@ function generate_gpg_keys() {
     gpg2 --gen-key --batch ${gpg_key_ring_import_file}
     rm -f "${gpg_key_ring_import_file}"
 
-    gpg_keys_info=`gpg2 --list-keys`
+    local gpg_keys_info=`gpg2 --list-keys`
     read -ra gpg_keys_data <<< ${gpg_keys_info}
     for index in "${!gpg_keys_data[@]}"
     do
-        gpg_keys_data_value="${gpg_keys_data[index]}"
+        local gpg_keys_data_value="${gpg_keys_data[index]}"
         if [ $(contains ${gpg_keys_data_value} ${gpg_key_ring_name}) == "true" ] ; then
             gpg_public_key_id_index=$((${index} - 7))
             gpg_public_key_id=`echo "${gpg_keys_data[gpg_public_key_id_index]}" | sed 's/ //g'`
@@ -117,18 +117,18 @@ function get_github_deploy_key_id {
     local github_repo="$5"
     local github_deploy_key_title="$6"
 
-    json=`curl -u "${github_user}:${github_token}" "${github_api_uri}/repos/${github_org}/${github_repo}/keys"`
-    github_deploy_key_id=`echo ${json} | jq ".[] | select(.title == \"${github_deploy_key_title}\") | .id"`
+    local json=`curl -u "${github_user}:${github_token}" "${github_api_uri}/repos/${github_org}/${github_repo}/keys"`
+    local github_deploy_key_id=`echo ${json} | jq ".[] | select(.title == \"${github_deploy_key_title}\") | .id"`
     echo ${github_deploy_key_id}
 }
 
 function get_group {
-    group=`awk '/group/{print $NF}' build.gradle | sed s/\'//g`
+    local group=`awk '/group/{print $NF}' build.gradle | sed s/\'//g`
     echo ${group}
 }
 
 function get_name {
-    name=`awk '/rootProject.name/{print $NF}' settings.gradle | sed s/\'//g`
+    local name=`awk '/rootProject.name/{print $NF}' settings.gradle | sed s/\'//g`
     echo ${name}
 }
 
@@ -143,7 +143,7 @@ function get_pipeline_creds_storage {
 }
 
 function get_version {
-    version=`sed 's/version=//g' gradle.properties`
+    local version=`sed 's/version=//g' gradle.properties`
     echo ${version}
 }
 
@@ -173,31 +173,31 @@ function read_password_input {
 
 function remove_special_chars {
     local string="$1"
-    value=`echo ${string} | sed 's/[-_+. ]//g'`
+    local value=`echo ${string} | sed 's/[-_+. ]//g'`
     echo ${value}
 }
 
 function remove_special_chars_but_period {
     local string="$1"
-    value=`echo ${string} | sed 's/[-_+ ]//g'`
+    local value=`echo ${string} | sed 's/[-_+ ]//g'`
     echo ${value}
 }
 
 function remove_whitespace_chars {
     local string="$1"
-    value=`echo ${string} | sed 's/[ ]//g'`
+    local value=`echo ${string} | sed 's/[ ]//g'`
     echo ${value}
 }
 
 function replace_special_chars_with_dash {
     local string="$1"
-    value=`echo ${string} | sed 's/[_+. ]/-/g'`
+    local value=`echo ${string} | sed 's/[_+. ]/-/g'`
     echo ${value}
 }
 
 function replace_special_chars_with_whitespace {
     local string="$1"
-    value=`echo ${string} | sed 's/[-_+.]/ /g'`
+    local value=`echo ${string} | sed 's/[-_+.]/ /g'`
     echo ${value}
 }
 
@@ -205,24 +205,24 @@ function replace_string {
     local string="$1"
     local search_string="$2"
     local replace_string="$3"
-    value=`echo ${string} | sed "s/${search_string}/${replace_string}/g"`
+    local value=`echo ${string} | sed "s/${search_string}/${replace_string}/g"`
     echo ${value}
 }
 
 function to_lower_case {
     local string="$1"
-    value=`echo ${string} | awk '{print tolower($0)}'`
+    local value=`echo ${string} | awk '{print tolower($0)}'`
     echo ${value}
 }
 
 function to_title_case {
     local string="$1"
-    value=`echo ${string} | perl -ane 'foreach $wrd ( @F ) { print ucfirst($wrd)." "; } print "\n" ; '`
+    local value=`echo ${string} | perl -ane 'foreach $wrd ( @F ) { print ucfirst($wrd)." "; } print "\n" ; '`
     echo ${value}
 }
 
 function to_upper_case {
     local string="$1"
-    value=`echo ${string} | awk '{print toupper($0)}'`
+    local value=`echo ${string} | awk '{print toupper($0)}'`
     echo ${value}
 }
