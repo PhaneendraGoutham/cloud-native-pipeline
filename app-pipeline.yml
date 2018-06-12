@@ -1,14 +1,14 @@
 jobs:
-- name: run-tests
-  plan:
-  - get: shared-pipeline
-  - get: project-pipeline
-  - get: source
-    trigger: true
-  - get: cloud-native-image
-  - task: run-all-tests
-    image: cloud-native-image
-    file: shared-pipeline/tasks/run-tests.yml
+#- name: run-tests
+#  plan:
+#  - get: shared-pipeline
+#  - get: project-pipeline
+#  - get: source
+#    trigger: true
+#  - get: cloud-native-image
+#  - task: run-all-tests
+#    image: cloud-native-image
+#    file: shared-pipeline/tasks/run-tests.yml
 
 - name: publish
   plan:
@@ -16,7 +16,7 @@ jobs:
   - get: project-pipeline
   - get: source
     trigger: true
-    passed: [run-tests]
+#    passed: [run-tests]
   - get: cloud-native-image
   - task: publish
     image: cloud-native-image
