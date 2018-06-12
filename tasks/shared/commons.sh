@@ -16,6 +16,7 @@ function get_cd_up_path {
     local dir="$1"
     local character='/'
     local count=`echo "${dir}" | awk -F"${character}" '{print NF-1}'`
+    local path=""
 
     for ((i = 1; i <= ${count}; i++));
     do
