@@ -12,6 +12,19 @@ function ends_with {
     fi
 }
 
+function format_gpg_key {
+    local gpg_key="$1"
+
+    gpg_key_formatted=`echo "${gpg_key/-----BEGIN PGP PRIVATE KEY BLOCK----- Version: GnuPG v2 /}"`
+    gpg_key_formatted=`echo "${gpg_key_formatted/-----END PGP PRIVATE KEY BLOCK-----/}"`
+    gpg_key_formatted=`echo "${gpg_key_formatted// /\n}" `
+
+    gpg_key_formatted="----BEGIN PGP PRIVATE KEY BLOCK-----\nVersion: GnuPG v2\n\n${gpg_key_formatted}"
+    gpg_key_formatted="${gpg_key_formatted}-----END PGP PRIVATE KEY BLOCK-----"
+    echo ${gpg_key_formatted}
+
+}
+
 function get_artifact_file {
     local artifact_id="$1"
     local artifact_file=`find $(pwd) -name ${artifact_id}*jar`
