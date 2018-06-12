@@ -1,6 +1,17 @@
 #!/bin/bash
 set -e -x -u
 
+function ends_with {
+    local string="$1"
+    local character="$2"
+
+    if [[ "${string: -1}" == "${character}" ]] ; then
+        echo true
+    else
+        echo false
+    fi
+}
+
 function get_artifact_file {
     local artifact_id="$1"
     local artifact_file=`find $(pwd) -name ${artifact_id}*jar`
@@ -16,8 +27,12 @@ function get_cd_up_path {
     local dir="$1"
     local character='/'
     local count=`echo "${dir}" | awk -F"${character}" '{print NF-1}'`
-    local path=""
 
+    if [[ $(ends_with ${dir} ${character}) == "false" ]] ; then
+        dir="${dir}/"
+    fi
+
+    local path=""
     for ((i = 1; i <= ${count}; i++));
     do
        path="${path}../"
