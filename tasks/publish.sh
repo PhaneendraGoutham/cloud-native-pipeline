@@ -15,7 +15,8 @@ fi
 if [ -d "${project_dir}" ]; then
     cd ${project_dir}
 
-    echo -ne $(format_gpg_key "${artifact_repo_signing_key_secret_keys}") > secret-keys.gpg
+#    echo -ne $(format_gpg_key "${artifact_repo_signing_key_secret_keys}") > secret-keys.gpg
+    echo -ne ${artifact_repo_signing_key_secret_keys} > secret-keys.gpg
 
     echo "nexusUsername=${artifact_repo_username}" > gradle.properties
     echo "nexusPassword=${artifact_repo_password}" >> gradle.properties
