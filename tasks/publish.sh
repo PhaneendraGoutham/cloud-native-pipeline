@@ -20,7 +20,7 @@ if [ -d "${project_dir}" ]; then
     echo "signing.password=${artifact_repo_signing_key_passphrase}" >> gradle.properties
     echo "signing.secretKeyRingFile=secret-keys.gpg" >> gradle.properties
 
-    ${get_cd_up_path ${project_dir}}gradlew uploadArchives
+    $(get_cd_up_path ${project_dir})gradlew uploadArchives
 else
     echo ${artifact_repo_signing_key_secret_keys} > secret-keys.gpg
 
