@@ -6,9 +6,9 @@ function ends_with {
     local character="$2"
 
     if [[ "${string: -1}" == "${character}" ]] ; then
-        echo true
-    else
         echo false
+    else
+        echo true
     fi
 }
 
@@ -26,11 +26,12 @@ function get_artifact_id {
 function get_cd_up_path {
     local dir="$1"
     local character='/'
-    local count=`echo "${dir}" | awk -F"${character}" '{print NF-1}'`
 
-    if [[ $(ends_with ${dir} ${character}) == "false" ]] ; then
+    if [[ $(ends_with "${dir}" "${character}") == "true" ]] ; then
         dir="${dir}/"
     fi
+
+    local count=`echo "${dir}" | awk -F"${character}" '{print NF-1}'`
 
     local path=""
     for ((i = 1; i <= ${count}; i++));
