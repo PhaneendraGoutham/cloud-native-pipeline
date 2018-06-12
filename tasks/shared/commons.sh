@@ -17,12 +17,11 @@ function format_gpg_key {
 
     gpg_key_formatted=`echo "${gpg_key/-----BEGIN PGP PRIVATE KEY BLOCK----- Version: GnuPG v2 /}"`
     gpg_key_formatted=`echo "${gpg_key_formatted/-----END PGP PRIVATE KEY BLOCK-----/}"`
-    gpg_key_formatted=`echo "${gpg_key_formatted// /\n\r}" `
+    gpg_key_formatted=`echo "${gpg_key_formatted// /\\\n}" `
 
-    gpg_key_formatted="----BEGIN PGP PRIVATE KEY BLOCK-----\n\rVersion: GnuPG v2\n\r\n\r${gpg_key_formatted}"
-    gpg_key_formatted="${gpg_key_formatted}-----END PGP PRIVATE KEY BLOCK-----"
-    echo ${gpg_key_formatted}
-
+    gpg_key_formatted_header="----BEGIN PGP PRIVATE KEY BLOCK-----\nVersion: GnuPG v2\n\n"
+    gpg_key_formatted_footer="-----END PGP PRIVATE KEY BLOCK-----"
+    echo "${gpg_key_formatted_header}${gpg_key_formatted}${gpg_key_formatted_footer}"
 }
 
 function get_artifact_file {
