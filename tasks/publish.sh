@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e -x -u
 
+work_dir=$(dirname $0)
+source ${work_dir}/shared/commons.sh
+
 cd source
 
 if [ "${env}" == "release" ] ; then
