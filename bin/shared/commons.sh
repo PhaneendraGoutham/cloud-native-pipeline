@@ -36,7 +36,7 @@ function delete_github_deploy_key {
     curl -u "${github_user}:${github_token}" -X DELETE "${github_api_uri}/repos/${github_org}/${github_repo}/keys/${github_deploy_key_id}"
 }
 
-function generate_gpg_keys() {
+function generate_gpg_keys {
     local gpg_dir="$1"
     local gpg_key_type="$2"
     local gpg_key_length="$3"
