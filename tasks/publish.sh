@@ -27,7 +27,9 @@ if [ -d "${project_dir}" ]; then
 
     $(get_cd_up_path ${project_dir})gradlew uploadArchives
 else
-    echo -ne $(format_gpg_key "${artifact_repo_signing_key_secret_keys}") > secret-keys.gpg
+    echo -e $(format_gpg_key "${artifact_repo_signing_key_secret_keys}") > secret-keys.gpg
+    echo "GPG Key..."
+    cat secret-keys.gpg
 
     echo "" >> gradle.properties
     echo "nexusUsername=${artifact_repo_username}" >> gradle.properties

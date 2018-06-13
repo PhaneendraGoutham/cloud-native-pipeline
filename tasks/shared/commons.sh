@@ -15,12 +15,13 @@ function ends_with {
 function format_gpg_key {
     local gpg_key="$1"
 
-    local gpg_key_formatted=`echo "${gpg_key/-----BEGIN PGP PRIVATE KEY BLOCK----- Version: GnuPG v2 /}"`
-    gpg_key_formatted=`echo "${gpg_key_formatted/-----END PGP PRIVATE KEY BLOCK-----/}"`
-    gpg_key_formatted=`echo "${gpg_key_formatted// /\\n}" `
+    local gpg_key_formatted=${gpg_key/-----BEGIN PGP PRIVATE KEY BLOCK-----/}
+    gpg_key_formatted=${gpg_key_formatted/Version: GnuPG v2/}
+    gpg_key_formatted=${gpg_key_formatted/-----END PGP PRIVATE KEY BLOCK-----/}
+    gpg_key_formatted=`echo ${gpg_key_formatted} | sed 's/[ ]/\\\n/g'`
 
     local gpg_key_formatted_header="-----BEGIN PGP PRIVATE KEY BLOCK-----\\nVersion: GnuPG v2\\n\\n"
-    local gpg_key_formatted_footer="-----END PGP PRIVATE KEY BLOCK-----"
+    local gpg_key_formatted_footer="\n-----END PGP PRIVATE KEY BLOCK-----"
     echo "${gpg_key_formatted_header}${gpg_key_formatted}${gpg_key_formatted_footer}"
 }
 
