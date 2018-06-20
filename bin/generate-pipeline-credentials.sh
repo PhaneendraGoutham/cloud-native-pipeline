@@ -733,8 +733,6 @@ if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
     echo "maven_central-password: ${maven_central_password}" >> ${pipeline_credentials_file}
     echo "maven-central-gpg-key-id: ${maven_central_gpg_key_id}" >> ${pipeline_credentials_file}
     echo "maven-central-gpg-key-passphrase: ${maven_central_gpg_key_ring_passphrase}" >> ${pipeline_credentials_file}
-    echo "maven-central-gpg-secret-keys: |" >> ${pipeline_credentials_file}
-    echo -e "${maven_central_gpg_secret_keys}" >> ${pipeline_credentials_file}
 
     echo -e "${green_color}Done!${no_color}"
     echo ""

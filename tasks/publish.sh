@@ -15,7 +15,7 @@ fi
 if [ -d "${project_dir}" ]; then
     cd ${project_dir}
 
-    echo -e $(format_gpg_key "${artifact_repo_signing_key_secret_keys}") > secret-keys.gpg
+    echo ${artifact_repo_signing_key_secret_keys} > secret-keys.gpg
     echo "GPG Key..."
     cat secret-keys.gpg
 
