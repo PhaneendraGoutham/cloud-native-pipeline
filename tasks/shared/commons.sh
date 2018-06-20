@@ -79,6 +79,12 @@ function get_json_content_type {
     echo ${content_type}
 }
 
+function get_release_notes {
+   local version="$1"
+   release_notes=`awk "/${version}/{flag=1;next}/## \[/{flag=0}flag" release-notes.md`
+   echo ${release_notes}
+}
+
 function get_version {
     local version=`sed 's/version=//g' gradle.properties | sed s/-SNAPSHOT//g`
     echo ${version}
@@ -90,10 +96,30 @@ function get_version_from_artifact_file {
     echo ${version}
 }
 
+function pcf_create_config_server {
+    local pcf_config_server_name="$1"
+    local pcf_config_server_git_repo_uri="$2"
+    local pcf_config_server_git_repo_branch="$3"
+    local pcf_config_server_git_repo_username="$4"
+    local pcf_config_server_git_repo_password="$5"
+    local pcf_service_name="$6"
+    local pcf_service_type=p-config-server
+    local pcf_service_plan=standard
+
+    cf service ${pcf_config_server_name} || { \
+    echo "Config Server ${pcf_config_server_name} not found. Creating new one..." >&2; \
+    cf cs ${pcf_service_type} ${pcf_service_plan} ${pcf_service_name} -c "{\"git\": {\"uri\": \"${pcf_config_server_git_repo_uri}\", \"label\": \"${pcf_config_server_git_repo_branch}\", \"username\":\"${pcf_config_server_git_repo_username}\", \"password\":\"${pcf_config_server_git_repo_password}\"}}"; \
+    echo "Config Server ${pcf_config_server_name} created successfully! Waiting for service registry to initialize..." >&2
+    until cf service ${pcf_config_server_name} | grep -m 1 "create succeeded"; do : ; done; \
+    echo "Config Server ${pcf_config_server_name} initialization completed successfully!" >&2; }
+}
+
+
 function pcf_create_cups {
     local pcf_app_name="$1"
     local pcf_service_name="$2"
     local pcf_service_uri="$3"
+
     cf us ${pcf_app_name} ${pcf_service_name} || { echo "CUPS ${pcf_service_name} not found. Cannot unbind. Continuing on..." >&2; }
     cf ds ${pcf_service_name} -f || { echo "CUPS ${pcf_service_name} not found. Cannot delete. Continuing on..." >&2; }
     cf cups ${pcf_service_name} -p "{\"uri\":\"${pcf_service_uri}\"}"
@@ -105,6 +131,7 @@ function pcf_create_service {
     local pcf_service_name="$2"
     local pcf_service_type="$3"
     local pcf_service_plan="$4"
+
     cf us ${pcf_app_name} ${pcf_service_name} || { echo "Service ${pcf_service_name} not found. Cannot unbind. Continuing on..." >&2; }
     cf ds ${pcf_service_name} -f || { echo "Service ${pcf_service_name} not found. Cannot delete. Continuing on..." >&2; }
     cf cs ${pcf_service_type} ${pcf_service_plan} ${pcf_service_name}
@@ -115,6 +142,7 @@ function pcf_create_service_registry {
     local pcf_service_registry_name="$1"
     local pcf_service_type=p-service-registry standard
     local pcf_service_plan=standard
+
     cf service ${pcf_service_registry_name} || { \
     echo "Service Registry ${pcf_service_registry_name} not found. Creating new one..." >&2; \
     cf cs ${pcf_service_type} ${pcf_service_plan} ${pcf_service_registry_name}; \
@@ -129,7 +157,14 @@ function pcf_login {
     local pcf_space_name="$3"
     local pcf_username="$4"
     local pcf_password="$5"
-    cf login -a ${pcf_api_endpoint} -o ${pcf_org_name} -s ${pcf_space_name} -u ${pcf_username} -p ${pcf_password} --skip-ssl-validation
+
+    cf login \
+        -a ${pcf_api_endpoint} \
+        -o ${pcf_org_name} \
+        -s ${pcf_space_name} \
+        -u ${pcf_username} \
+        -p ${pcf_password} \
+        --skip-ssl-validation
 }
 
 function pcf_push {
@@ -140,6 +175,7 @@ function pcf_push {
 function set_manifest_properties {
     local artifact_id="$1"
     local pcf_app_name="$2"
+
     sed -e "s/path\:.*/path\: ${artifact_id}\.jar/g" manifest.yml -i
     sed -e "s/name\:\s${artifact_id}.*/name\: ${pcf_app_name}/g" manifest.yml -i
     echo "Manifest properties set successfully!" >&2

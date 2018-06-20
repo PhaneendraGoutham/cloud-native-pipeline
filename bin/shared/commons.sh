@@ -83,7 +83,7 @@ function generate_gpg_keys {
     if [ "${gpg_public_key_id}" != "" ] ; then
         gpg2 --keyserver ${gpg_key_server} --send-key ${gpg_public_key_id}
         echo ${gpg_key_passphrase} > ${gpg_passphrase_file}
-        gpg2 --passphrase-fd ${gpg_passphrase_file} --export-secret-keys -a ${gpg_public_key_id} > ${gpg_secret_keys_file}
+        gpg2 --passphrase-fd ${gpg_passphrase_file} --export-secret-keys ${gpg_public_key_id} > ${gpg_secret_keys_file}
         rm -f ${gpg_passphrase_file}
         echo ${gpg_public_key_id}
     fi
