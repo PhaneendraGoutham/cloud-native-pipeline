@@ -109,6 +109,11 @@ function get_json_content_type {
     echo ${content_type}
 }
 
+function get_project_artifact_id {
+    local artifact_id=`awk '/name/{print $NF; exit}' build.gradle | sed s/\'//g`
+    echo ${artifact_id}
+}
+
 function get_release_notes {
    local version="$1"
    release_notes=`awk "/${version}/{flag=1;next}/## \[/{flag=0}flag" release-notes.md`

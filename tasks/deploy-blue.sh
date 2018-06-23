@@ -16,6 +16,12 @@ group_id_path=$(get_group_id_path)
 artifact_id=$(get_artifact_id)
 version=$(get_version)
 
+if [ -d "${project_dir}" ]; then
+    cd ${project_dir}
+    artifact_id=$(get_project_artifact_id)
+    cd $(get_cd_up_path ${project_dir})
+fi
+
 curl ${artifact_repo_uri}/${group_id_path}/${artifact_id}/${version}/${artifact_id}-${version}.jar -k -o ${artifact_id}.jar
 
 set_manifest_properties ${artifact_id} ${pcf_app_name}

@@ -41,6 +41,7 @@ jobs:
     image: cf-cli-image
     file: shared-pipeline/tasks/deploy-blue.yml
     params:
+      project_dir: ((project-dir))
       artifact_repo_uri: ((artifact-snapshots-repo-uri))
       pcf_app_name: ((pcf-app-name))
       pcf_api_endpoint: ((pcf-api-endpoint))
