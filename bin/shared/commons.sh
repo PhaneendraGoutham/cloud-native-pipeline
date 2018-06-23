@@ -41,10 +41,10 @@ function generate_gpg_keys {
     local gpg_key_type="$2"
     local gpg_key_length="$3"
     local gpg_key_usage="$4"
-    local gpg_key_passphrase="$5"
-    local gpg_key_ring_name="$6"
-    local gpg_key_ring_comment="$7"
-    local gpg_key_ring_email="$8"
+    local gpg_key_ring_name="$5"
+    local gpg_key_ring_comment="$6"
+    local gpg_key_ring_email="$7"
+    local gpg_key_passphrase="$8"
     local gpg_key_expire_date="$9"
     local gpg_key_server="${10}"
     local gpg_key_ring_import_file="${11}"
@@ -83,7 +83,7 @@ function generate_gpg_keys {
     if [ "${gpg_public_key_id}" != "" ] ; then
         gpg2 --keyserver ${gpg_key_server} --send-key ${gpg_public_key_id}
         echo ${gpg_key_passphrase} > ${gpg_passphrase_file}
-        gpg2 --export-secret-keys ${gpg_public_key_id} > ${gpg_secret_keys_file}
+        gpg2 --export-secret-keys -a ${gpg_public_key_id} > ${gpg_secret_keys_file}
         rm -f ${gpg_passphrase_file}
         echo ${gpg_public_key_id}
     fi

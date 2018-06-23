@@ -25,6 +25,18 @@ function format_gpg_key {
     echo "${gpg_key_formatted_header}${gpg_key_formatted}${gpg_key_formatted_footer}"
 }
 
+function format_private_key {
+    local private_key="$1"
+
+    local key_formatted=${private_key/-----BEGIN RSA PRIVATE KEY-----/}
+    key_formatted=${key_formatted/-----END RSA PRIVATE KEY-----/}
+    key_formatted=`echo ${key_formatted} | sed 's/[ ]/\\\n/g'`
+
+    local key_formatted_header="-----BEGIN RSA PRIVATE KEY-----\\n"
+    local key_formatted_footer="\n-----END RSA PRIVATE KEY-----"
+    echo "${key_formatted_header}${key_formatted}${key_formatted_footer}"
+}
+
 function get_artifact_file {
     local artifact_id="$1"
     local artifact_file=`find $(pwd) -name ${artifact_id}*jar`
@@ -100,20 +112,19 @@ function pcf_create_config_server {
     local pcf_config_server_name="$1"
     local pcf_config_server_git_repo_uri="$2"
     local pcf_config_server_git_repo_branch="$3"
-    local pcf_config_server_git_repo_username="$4"
-    local pcf_config_server_git_repo_password="$5"
-    local pcf_service_name="$6"
+    local pcf_config_server_git_repo_private_key="$4"
     local pcf_service_type=p-config-server
     local pcf_service_plan=standard
 
+    private_key=$(format_private_key "${pcf_config_server_git_repo_private_key}")
+
     cf service ${pcf_config_server_name} || { \
     echo "Config Server ${pcf_config_server_name} not found. Creating new one..." >&2; \
-    cf cs ${pcf_service_type} ${pcf_service_plan} ${pcf_service_name} -c "{\"git\": {\"uri\": \"${pcf_config_server_git_repo_uri}\", \"label\": \"${pcf_config_server_git_repo_branch}\", \"username\":\"${pcf_config_server_git_repo_username}\", \"password\":\"${pcf_config_server_git_repo_password}\"}}"; \
+    cf cs ${pcf_service_type} ${pcf_service_plan} ${pcf_config_server_name} -c "{\"git\": {\"uri\": \"${pcf_config_server_git_repo_uri}\", \"label\": \"${pcf_config_server_git_repo_branch}\", \"privateKey\": \"${private_key}\"}}"; \
     echo "Config Server ${pcf_config_server_name} created successfully! Waiting for service registry to initialize..." >&2
     until cf service ${pcf_config_server_name} | grep -m 1 "create succeeded"; do : ; done; \
     echo "Config Server ${pcf_config_server_name} initialization completed successfully!" >&2; }
 }
-
 
 function pcf_create_cups {
     local pcf_app_name="$1"
@@ -140,7 +151,7 @@ function pcf_create_service {
 
 function pcf_create_service_registry {
     local pcf_service_registry_name="$1"
-    local pcf_service_type=p-service-registry standard
+    local pcf_service_type=p-service-registry
     local pcf_service_plan=standard
 
     cf service ${pcf_service_registry_name} || { \
