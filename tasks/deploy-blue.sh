@@ -27,11 +27,11 @@ curl ${artifact_repo_uri}/${group_id_path}/${artifact_id}/${version}/${artifact_
 set_manifest_properties ${artifact_id} ${pcf_app_name}
 
 pcf_login \
-    ${pcf_api_endpoint} \
-    -o ${pcf_org_name} \
-    -s ${pcf_space_name} \
-    -u ${pcf_username} \
-    -p ${pcf_password}
+    "${pcf_api_endpoint}" \
+    "${pcf_org_name}" \
+    "${pcf_space_name}" \
+    "${pcf_username}" \
+    "${pcf_password}"
 
 create_pcf_services_task_script_path="../../${create_pcf_services_task_script}"
 
