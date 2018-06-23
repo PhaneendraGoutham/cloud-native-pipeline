@@ -40,4 +40,4 @@ if [ -d "${create_pcf_services_task_script_path}" ]; then
 fi
 
 pcf_app_name_blue=${pcf_app_name}-blue
-pcf_push ${pcf_app_name_blue}
+pcf_push_blue ${pcf_app_name_blue}
