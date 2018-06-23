@@ -210,7 +210,7 @@ function set_manifest_properties {
     local artifact_id="$1"
     local pcf_app_name="$2"
 
+    sed -e "s/name\:.*/name\: ${pcf_app_name}/g" manifest.yml -i
     sed -e "s/path\:.*/path\: ${artifact_id}\.jar/g" manifest.yml -i
-    sed -e "s/name\:\s${artifact_id}.*/name\: ${pcf_app_name}/g" manifest.yml -i
     echo "Manifest properties set successfully!" >&2
 }

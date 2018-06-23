@@ -27,7 +27,7 @@ cd build
 curl ${artifact_repo_uri}/${group_id_path}/${artifact_id}/${version}/${artifact_id}-${version}.jar -k -o ${artifact_id}.jar
 
 pcf_app_name_blue=${pcf_app_name}-blue
-set_manifest_properties ${artifact_id} ${pcf_app_name}
+set_manifest_properties ${artifact_id} ${pcf_app_name_blue}
 
 pcf_login \
     "${pcf_api_endpoint}" \
