@@ -16,20 +16,20 @@ if [ -d "${project_dir}" ]; then
     cd ${project_dir}
 
     configure_artifact_publishing \
-        ${artifact_repo_username} \
-        ${artifact_repo_password} \
-        ${artifact_repo_signing_key_id} \
-        ${artifact_repo_signing_key_passphrase} \
-        ${artifact_repo_signing_key_secret_keys}
+        "${artifact_repo_username}" \
+        "${artifact_repo_password}" \
+        "${artifact_repo_signing_key_id}" \
+        "${artifact_repo_signing_key_passphrase}" \
+        "${artifact_repo_signing_key_secret_keys}"
 
     $(get_cd_up_path ${project_dir})gradlew uploadArchives
 else
     configure_artifact_publishing \
-        ${artifact_repo_username} \
-        ${artifact_repo_password} \
-        ${artifact_repo_signing_key_id} \
-        ${artifact_repo_signing_key_passphrase} \
-        ${artifact_repo_signing_key_secret_keys}
+        "${artifact_repo_username}" \
+        "${artifact_repo_password}" \
+        "${artifact_repo_signing_key_id}" \
+        "${artifact_repo_signing_key_passphrase}" \
+        "${artifact_repo_signing_key_secret_keys}"
 
     ./gradlew uploadArchives
 fi

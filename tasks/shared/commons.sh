@@ -44,7 +44,7 @@ function configure_artifact_publishing {
     local artifact_repo_signing_key_passphrase="$4"
     local artifact_repo_signing_key_secret_keys="$5"
 
-    echo -e $(format_gpg_key "${artifact_repo_signing_key_secret_keys}") > secret-keys.gpg
+    echo -e $(format_gpg_key "${artifact_repo_signing_key_secret_keys}") > secret-keys.asc
     gpg2 --dearmor secret-keys.asc
     mv secret-keys.asc.gpg secret-keys.gpg
 
