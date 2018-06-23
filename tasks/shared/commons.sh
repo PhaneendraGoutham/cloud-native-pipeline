@@ -100,7 +100,7 @@ function get_group_id {
 }
 
 function get_group_id_path {
-    local group_id_path=`awk '/group/{print $NF}' build.gradle | sed s/\'//g | tr "." "/"`
+    local group_id_path=`awk '/group/{print $NF; exit}' build.gradle | sed s/\'//g | tr "." "/"`
     echo ${group_id_path}
 }
 
