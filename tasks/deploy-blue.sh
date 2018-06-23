@@ -22,6 +22,8 @@ if [ -d "${project_dir}" ]; then
     cd $(get_cd_up_path ${project_dir})
 fi
 
+cd build
+
 curl ${artifact_repo_uri}/${group_id_path}/${artifact_id}/${version}/${artifact_id}-${version}.jar -k -o ${artifact_id}.jar
 
 set_manifest_properties ${artifact_id} ${pcf_app_name}
