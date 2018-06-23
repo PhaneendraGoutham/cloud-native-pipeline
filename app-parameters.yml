@@ -1,2 +1,3 @@
 ---
-artifact-snapshots-repo-uri: https://oss.sonatype.org/content/repositories/snapshots
+artifact-snapshots-repo-uri: https://oss.sonatype.org
+artifact-snapshots-repo-name: snapshots

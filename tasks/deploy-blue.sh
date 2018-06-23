@@ -12,7 +12,7 @@ cp gradle.properties build
 cp manifest.yml build
 cp settings.gradle build
 
-group_id_path=$(get_group_id_path)
+group_id=$(get_group_id)
 artifact_id=$(get_artifact_id)
 version=$(get_version)
 
@@ -24,7 +24,7 @@ fi
 
 cd build
 
-curl ${artifact_repo_uri}/${group_id_path}/${artifact_id}/${version}/${artifact_id}-${version}.jar -k -o ${artifact_id}.jar
+curl ${artifact_repo_uri}/artifact/maven/redirect?r=${artifact_repo_name}&g=${group_id}&a=${artifact_id}&v=${version} -k -o ${artifact_id}.jar
 
 pcf_app_name_blue=${pcf_app_name}-blue
 set_manifest_properties ${artifact_id} ${pcf_app_name_blue}

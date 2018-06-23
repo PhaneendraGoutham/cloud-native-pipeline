@@ -4,6 +4,7 @@ platform: linux
 params:
   env: dev
   artifact_repo_uri: No Artifact Repo URI
+  artifact_repo_name: No Artifact Repo Name
   pcf_app_name: No PCF App Name
   pcf_api_endpoint: No PCF API Endpoint
   pcf_org_name: No PCF Org Name
