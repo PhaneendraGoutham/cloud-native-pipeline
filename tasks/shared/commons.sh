@@ -95,7 +95,7 @@ function get_current_timestamp {
 }
 
 function get_group_id {
-    local group_id=`awk '/group/{print $NF}' build.gradle | sed s/\'//g`
+    local group_id=`awk '/group/{print $NF; exit}' build.gradle | sed s/\'//g`
     echo ${group_id}
 }
 
