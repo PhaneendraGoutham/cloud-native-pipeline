@@ -15,24 +15,21 @@ fi
 if [ -d "${project_dir}" ]; then
     cd ${project_dir}
 
-    echo ${artifact_repo_signing_key_secret_keys} > secret-keys.gpg
-
-    echo "nexusUsername=${artifact_repo_username}" > gradle.properties
-    echo "nexusPassword=${artifact_repo_password}" >> gradle.properties
-    echo "signing.keyId=${artifact_repo_signing_key_id}" >> gradle.properties
-    echo "signing.password=${artifact_repo_signing_key_passphrase}" >> gradle.properties
-    echo "signing.secretKeyRingFile=${PWD}/secret-keys.gpg" >> gradle.properties
+    configure_artifact_publishing \
+        ${artifact_repo_username} \
+        ${artifact_repo_password} \
+        ${artifact_repo_signing_key_id} \
+        ${artifact_repo_signing_key_passphrase} \
+        ${artifact_repo_signing_key_secret_keys}
 
     $(get_cd_up_path ${project_dir})gradlew uploadArchives
 else
-    echo -e ${artifact_repo_signing_key_secret_keys} > secret-keys.gpg
-
-    echo "" >> gradle.properties
-    echo "nexusUsername=${artifact_repo_username}" >> gradle.properties
-    echo "nexusPassword=${artifact_repo_password}" >> gradle.properties
-    echo "signing.keyId=${artifact_repo_signing_key_id}" >> gradle.properties
-    echo "signing.password=${artifact_repo_signing_key_passphrase}" >> gradle.properties
-    echo "signing.secretKeyRingFile=${PWD}/secret-keys.gpg" >> gradle.properties
+    configure_artifact_publishing \
+        ${artifact_repo_username} \
+        ${artifact_repo_password} \
+        ${artifact_repo_signing_key_id} \
+        ${artifact_repo_signing_key_passphrase} \
+        ${artifact_repo_signing_key_secret_keys}
 
     ./gradlew uploadArchives
 fi

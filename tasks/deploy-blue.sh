@@ -20,12 +20,17 @@ curl ${artifact_repo_uri}/${group_id_path}/${artifact_id}/${version}/${artifact_
 
 set_manifest_properties ${artifact_id} ${pcf_app_name}
 
-pcf_login ${pcf_api_endpoint} -o ${pcf_org_name} -s ${pcf_space_name} -u ${pcf_username} -p ${pcf_password}
+pcf_login \
+    ${pcf_api_endpoint} \
+    -o ${pcf_org_name} \
+    -s ${pcf_space_name} \
+    -u ${pcf_username} \
+    -p ${pcf_password}
 
-pcf_services_task_script_path="../../${create_pcf_services_task_script}"
+create_pcf_services_task_script_path="../../${create_pcf_services_task_script}"
 
-if [ -d "${pcf_services_task_script_path}" ]; then
-    source ${pcf_services_task_script_path}
+if [ -d "${create_pcf_services_task_script_path}" ]; then
+    source ${create_pcf_services_task_script_path}
 fi
 
 pcf_app_name_blue=${pcf_app_name}-blue

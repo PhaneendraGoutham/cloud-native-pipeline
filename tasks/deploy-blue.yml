@@ -15,7 +15,7 @@ params:
 inputs:
 - name: shared-pipeline
 - name: project-pipeline
-- name: source-code
+- name: source
 
 run:
   path: shared-pipeline/tasks/deploy-blue.sh

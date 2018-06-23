@@ -37,6 +37,24 @@ function format_private_key {
     echo "${key_formatted_header}${key_formatted}${key_formatted_footer}"
 }
 
+function configure_artifact_publishing {
+    local artifact_repo_username="$1"
+    local artifact_repo_password="$2"
+    local artifact_repo_signing_key_id="$3"
+    local artifact_repo_signing_key_passphrase="$4"
+    local artifact_repo_signing_key_secret_keys="$5"
+
+    echo -e $(format_gpg_key "${artifact_repo_signing_key_secret_keys}") > secret-keys.gpg
+    gpg2 --dearmor secret-keys.asc
+    mv secret-keys.asc.gpg secret-keys.gpg
+
+    echo "nexusUsername=${artifact_repo_username}" > gradle.properties
+    echo "nexusPassword=${artifact_repo_password}" >> gradle.properties
+    echo "signing.keyId=${artifact_repo_signing_key_id}" >> gradle.properties
+    echo "signing.password=${artifact_repo_signing_key_passphrase}" >> gradle.properties
+    echo "signing.secretKeyRingFile=${PWD}/secret-keys.gpg" >> gradle.properties
+}
+
 function get_artifact_file {
     local artifact_id="$1"
     local artifact_file=`find $(pwd) -name ${artifact_id}*jar`
@@ -178,7 +196,7 @@ function pcf_login {
         --skip-ssl-validation
 }
 
-function pcf_push {
+function pcf_push_blue {
     local pcf_app_name="$1"
     cf push
 }
