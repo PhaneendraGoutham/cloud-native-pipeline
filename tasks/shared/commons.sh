@@ -116,7 +116,7 @@ function get_release_notes {
 }
 
 function get_version {
-    local version=`sed 's/version=//g' gradle.properties | sed s/-SNAPSHOT//g`
+    local version=`sed 's/version=//g' gradle.properties`
     echo ${version}
 }
 
