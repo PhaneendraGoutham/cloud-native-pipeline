@@ -6,7 +6,7 @@ concourse_instance_name=opengood-io
 concourse_uri=http://concourse.opengood.io:8080
 default_concourse_team_name=main
 
-default_pcf_api_endpoint=https://api.sys.cfapps.io
+default_pcf_api_endpoint=https://api.run.pivotal.io
 default_pcf_org_name=demo-gaig-org
 default_pcf_space_name=development
 
