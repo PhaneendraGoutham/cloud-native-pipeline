@@ -1,0 +1,16 @@
+---
+platform: linux
+
+params:
+  env: dev
+  pcf_app_name: No PCF App Name
+  version_check_endpoint_uri_template: https://%s.cfapps.io/actutator/info
+  smoke_tests_task_script: no-script.sh
+
+inputs:
+- name: shared-pipeline
+- name: project-pipeline
+- name: source
+
+run:
+  path: shared-pipeline/tasks/smoke-tests.sh

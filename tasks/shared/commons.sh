@@ -1,6 +1,17 @@
 #!/bin/bash
 set -e -x -u
 
+function contains {
+    local string="$1"
+    local search_string="$2"
+
+    if echo ${string} | grep -iqF "${search_string}"; then
+        echo true
+    else
+        echo false
+    fi
+}
+
 function ends_with {
     local string="$1"
     local character="$2"
@@ -213,4 +224,30 @@ function set_manifest_properties {
     sed -e "s/name\:.*/name\: ${pcf_app_name}/g" manifest.yml -i
     sed -e "s/path\:.*/path\: ${artifact_id}\.jar/g" manifest.yml -i
     echo "Manifest properties set successfully!" >&2
+}
+
+function replace_string {
+    local string="$1"
+    local search_string="$2"
+    local replace_string="$3"
+    local value=`echo ${string} | sed "s/${search_string}/${replace_string}/g"`
+    echo ${value}
+}
+
+function to_lower_case {
+    local string="$1"
+    local value=`echo ${string} | awk '{print tolower($0)}'`
+    echo ${value}
+}
+
+function to_title_case {
+    local string="$1"
+    local value=`echo ${string} | perl -ane 'foreach $wrd ( @F ) { print ucfirst($wrd)." "; } print "\n" ; '`
+    echo ${value}
+}
+
+function to_upper_case {
+    local string="$1"
+    local value=`echo ${string} | awk '{print toupper($0)}'`
+    echo ${value}
 }
