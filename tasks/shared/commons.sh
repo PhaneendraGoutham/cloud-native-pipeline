@@ -23,6 +23,29 @@ function ends_with {
     fi
 }
 
+function exec_smoke_test {
+    local smoke_test_type="$1"
+    local smoke_test_endpoint_uri_template="$2"
+    local smoke_test_json_path="$3"
+    local smoke_test_expected_value="$4"
+    local pcf_app_name="$5"
+
+    local smoke_test_endpoint_uri=$(replace_string ${smoke_test_endpoint_uri_template} "%s" ${pcf_app_name})
+
+    echo "Executing smoke test '${smoke_test_type}' to URI '${smoke_test_endpoint_uri}' expecting value '${smoke_test_expected_value}'..." &>2
+    local json=$(curl ${smoke_test_endpoint_uri} -k)
+    local smoke_test_actual_value=$(echo ${json} | jq -r "${smoke_test_json_path}")
+    echo "Received actual value from smoke test '${smoke_test_type}' '${smoke_test_actual_value}'" &>2
+
+    if [ "${smoke_test_expected_value}" == "${smoke_test_actual_value}" ] ; then
+        echo "Smoke test '${smoke_test_type}' PASSED!!!" &>2
+        echo "passed"
+    else
+        echo "Smoke test '${smoke_test_type}' FAILED!" &>2
+        echo "failed"
+    fi
+}
+
 function format_gpg_key {
     local gpg_key="$1"
 
@@ -213,6 +236,11 @@ function pcf_login {
 }
 
 function pcf_push_blue {
+    local pcf_app_name="$1"
+    cf push
+}
+
+function pcf_push_green {
     local pcf_app_name="$1"
     cf push
 }
