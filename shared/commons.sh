@@ -484,9 +484,6 @@ function pcf_deploy_green {
     echo "Renaming current green app '${pcf_app_name_green}' to blue app '${pcf_app_name_blue}' in PCF..." &>2
     cf rename ${pcf_app_name_green} ${pcf_app_name_blue}
 
-    echo "Un-mapping route '${pcf_app_route_blue}' of blue app '${pcf_app_name_blue}' in PCF..." &>2
-    cf unmap-route ${pcf_app_name_blue} ${pcf_domain_name} -n ${pcf_app_route_blue}
-
     echo "Deploying green app '${pcf_app_name_green}' with route '${pcf_app_route_green}' to PCF..." &>2
     pcf_push ${pcf_app_name_green} ${pcf_app_route_green}
 }
