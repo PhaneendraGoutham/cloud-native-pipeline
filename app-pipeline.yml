@@ -66,6 +66,19 @@ jobs:
     params:
       pcf_app_name: ((pcf-app-name))
       pcf_domain_name: ((pcf-domain-name))
+  on_failure:
+    do:
+    - task: smoke-tests-failed
+      image: cf-cli-image
+      file: shared-pipeline/tasks/rollback-green.yml
+      params:
+        pcf_app_name: ((pcf-app-name))
+        pcf_api_endpoint_uri: ((pcf-api-endpoint-uri))
+        pcf_domain_name: ((pcf-domain-name))
+        pcf_org_name: ((pcf-org-name))
+        pcf_space_name: ((pcf-space-name))
+        pcf_username: ((pcf-username))
+        pcf_password: ((pcf-password))
 
 - name: deploy-blue
   plan:

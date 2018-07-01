@@ -534,6 +534,29 @@ function pcf_push {
     cf push ${pcf_app_name} -n ${pcf_app_host_name}
 }
 
+function pcf_rollback_green {
+    local pcf_app_name="$1"
+    local pcf_domain_name="$2"
+
+    local pcf_app_name_blue=$(pcf_get_blue_app_name ${pcf_app_name})
+    local pcf_app_route_blue=$(pcf_get_blue_route_name ${pcf_app_name})
+    local pcf_app_name_green=$(pcf_get_green_app_name ${pcf_app_name})
+    local pcf_app_route_green=$(pcf_get_green_route_name ${pcf_app_name})
+
+    if [ $(pcf_route_exists ${pcf_app_route_green} ${pcf_domain_name}) == "true" ] ; then
+        echo "Deleting route '${pcf_app_route_green}' of green app '${pcf_app_name_green}' from PCF..." &>2
+        cf delete-route ${pcf_domain_name} -n ${pcf_app_route_green} -f
+    fi
+
+    if [ $(pcf_app_exists ${pcf_app_name_blue}) == "true" ] ; then
+        echo "Deleting green app '${pcf_app_name_green}' from PCF..." &>2
+        cf delete ${pcf_app_name_green} -f
+    fi
+
+    echo "Renaming current blue app '${pcf_app_name_blue}' to green app '${pcf_app_name_green}' in PCF..." &>2
+    cf rename ${pcf_app_name_blue} ${pcf_app_name_green}
+}
+
 function pcf_route_exists {
     local pcf_app_route_name="$1"
     local pcf_domain_name="$2"
