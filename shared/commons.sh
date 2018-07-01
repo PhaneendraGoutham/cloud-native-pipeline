@@ -260,17 +260,21 @@ function get_cd_up_path {
     local character='/'
 
     if [[ $(string_ends_with ${dir} ${character}) == "true" ]] ; then
-        dir=${dir}/
+        dir+=/
     fi
 
     local count=`echo ${dir} | awk -F"${character}" '{print NF-1}'`
 
-    local path=""
-    for ((i = 1; i <= ${count}; i++));
-    do
-       path+="../"
-    done
-    echo ${path}
+    if [[ "${count}" -eq 0 ]] ; then
+        echo ""
+    else
+        local path=""
+        for ((i = 1; i <= ${count}; i++));
+        do
+           path+="../"
+        done
+        echo ${path}
+    fi
 }
 
 function get_current_date {
