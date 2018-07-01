@@ -347,13 +347,11 @@ function mask_string {
 }
 
 function pcf_app_exists {
-    local pcf_app_hostname="$1"
-    local pcf_domain_name="$2"
+    local pcf_app_name="$1"
 
-    local pcf_app_domain="${pcf_app_hostname}.${pcf_domain_name}"
     local output=`cf apps`
 
-    if [ $(contains_string ${output} ${pcf_app_domain}) == "true" ] ; then
+    if [ $(contains_string ${output} ${pcf_app_name}) == "true" ] ; then
         echo true
     else
         echo false
@@ -470,12 +468,12 @@ function pcf_deploy_green {
     local pcf_app_name_green=$(pcf_get_green_app_name ${pcf_app_name})
     local pcf_app_route_green=$(pcf_get_green_route_name ${pcf_app_name})
 
-    if [ $(pcf_app_exists ${pcf_app_route_blue} ${pcf_domain_name}) == "false" ] ; then
+    if [ $(pcf_route_exists ${pcf_app_route_blue} ${pcf_domain_name}) == "false" ] ; then
         echo "Deploying app '${pcf_app_name_green}' with route '${pcf_app_route_blue}' to PCF for first time..." &>2
         pcf_push ${pcf_app_name_green} ${pcf_app_route_blue}
     fi
 
-    if [ $(pcf_app_exists ${pcf_app_name_blue} ${pcf_domain_name}) == "true" ] ; then
+    if [ $(pcf_app_exists ${pcf_app_name_blue}) == "true" ] ; then
         echo "Deleting blue app '${pcf_app_name_blue}' from PCF..." &>2
         cf delete ${pcf_app_name_blue}
     fi
@@ -534,6 +532,20 @@ function pcf_push {
 
     echo "Pushing app '${pcf_app_name}' to PCF..." &>2
     cf push ${pcf_app_name} -n ${pcf_app_host_name}
+}
+
+function pcf_route_exists {
+    local pcf_app_route_name="$1"
+    local pcf_domain_name="$2"
+
+    local pcf_app_uri="${pcf_app_route_name}.${pcf_domain_name}"
+    local output=`cf apps`
+
+    if [ $(contains_string ${output} ${pcf_app_uri}) == "true" ] ; then
+        echo true
+    else
+        echo false
+    fi
 }
 
 function pcf_set_manifest_properties {
