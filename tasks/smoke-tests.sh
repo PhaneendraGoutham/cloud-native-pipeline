@@ -34,7 +34,8 @@ if [ "${version_check_status}" == "failed" ] ; then
     exit 1
 fi
 
-smoke_tests_task_script_path=$(get_cd_up_path ${smoke_tests_task_script})
+smoke_tests_task_script_path=$(get_cd_up_path ${smoke_tests_task_script})${smoke_tests_task_script}
+
 if [ -d "${smoke_tests_task_script_path}" ]; then
     source ${smoke_tests_task_script_path}
 fi
