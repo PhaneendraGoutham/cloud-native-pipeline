@@ -476,9 +476,6 @@ function pcf_deploy_green {
     if [ $(pcf_app_exists ${pcf_app_name_blue}) == "true" ] ; then
         echo "Deleting blue app '${pcf_app_name_blue}' from PCF..." &>2
         cf delete ${pcf_app_name_blue} -f
-
-        echo "Deleting route '${pcf_app_route_green}' of blue app '${pcf_app_name_blue}' in PCF..." &>2
-        cf delete-route ${pcf_domain_name} -n ${pcf_app_route_green} -f
     fi
 
     echo "Renaming current green app '${pcf_app_name_green}' to blue app '${pcf_app_name_blue}' in PCF..." &>2
