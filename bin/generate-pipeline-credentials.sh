@@ -238,12 +238,12 @@ if [ "${has_pcf}" == "Y" ] ; then
     has_pcf_api_domain_org_space=`echo $(to_upper_case ${has_pcf_api_domain_org_space})`
 
     if [ "${has_pcf_api_domain_org_space}" == "N" ] ; then
-        echo -e "Enter value for ${cyan_color}'pcfApiEndpoint' (default: ${default_pcf_api_endpoint})${no_color}, followed by [ENTER]:"
-        read pcf_api_endpoint
+        echo -e "Enter value for ${cyan_color}'pcfApiEndpoint' (default: ${default_pcf_api_endpoint_uri})${no_color}, followed by [ENTER]:"
+        read pcf_api_endpoint_uri
         echo ""
 
-        if [ "${pcf_api_endpoint}" == "" ] ; then
-            pcf_api_endpoint=${default_pcf_api_endpoint}
+        if [ "${pcf_api_endpoint_uri}" == "" ] ; then
+            pcf_api_endpoint_uri=${default_pcf_api_endpoint_uri}
         fi
 
         echo -e "Enter value for ${cyan_color}'pcfDomain' (default: ${default_pcf_domain_name})${no_color}, followed by [ENTER]:"
@@ -279,7 +279,7 @@ if [ "${has_pcf}" == "Y" ] ; then
         pcf_space_name=$(to_lower_case ${pcf_space_name})
         pcf_space_name=$(replace_special_chars_with_dash ${pcf_space_name})
     else
-        pcf_api_endpoint=""
+        pcf_api_endpoint_uri=""
         pcf_org_name=""
         pcf_space_name=""
     fi
@@ -316,7 +316,7 @@ if [ "${has_pcf}" == "Y" ] ; then
         pcf_password=""
     fi
 else
-    pcf_api_endpoint=""
+    pcf_api_endpoint_uri=""
     pcf_org_name=""
     pcf_space_name=""
     pcf_username=""
@@ -529,7 +529,7 @@ if [ "${docker_username}" != "" ] && [ "${docker_password}" != "" ] ; then
     echo ""
 fi
 
-if [ "${pcf_api_endpoint}" != "" ] && \
+if [ "${pcf_api_endpoint_uri}" != "" ] && \
     [ "${pcf_domain_name}" != "" ] && \
     [ "${pcf_org_name}" != "" ] && \
     [ "${pcf_space_name}" != "" ] || \
@@ -538,7 +538,7 @@ if [ "${pcf_api_endpoint}" != "" ] && \
     echo -e "${cyan_color}===================================================================================${no_color}"
     echo -e "${cyan_color}PCF${no_color}"
     echo -e "${cyan_color}===================================================================================${no_color}"
-    echo -e "${cyan_color}     API endpoint: ${pcf_api_endpoint}${no_color}"
+    echo -e "${cyan_color}     API endpoint: ${pcf_api_endpoint_uri}${no_color}"
     echo -e "${cyan_color}      Domain name: ${pcf_domain_name}${no_color}"
     echo -e "${cyan_color}Organization name: ${pcf_org_name}${no_color}"
     echo -e "${cyan_color}       Space name: ${pcf_space_name}${no_color}"
@@ -679,12 +679,12 @@ if [ "${pipeline_creds_storage_option}" == "V" ] ; then
         echo ""
     fi
 
-    if [ "${pcf_api_endpoint}" != "" ] &&
+    if [ "${pcf_api_endpoint_uri}" != "" ] &&
         [ "${pcf_domain_name}" != "" ] &&
         [ "${pcf_org_name}" != "" ] &&
         [ "${pcf_space_name}" != "" ] ; then
         echo -e "${cyan_color}Storing PCF shared API endpoint, domain, organization, and space into Vault for Concourse CI pipeline...${no_color}"
-        vault write concourse/${concourse_team_name}/pcf-api-endpoint value="${pcf_api_endpoint}"
+        vault write concourse/${concourse_team_name}/pcf-api-endpoint value="${pcf_api_endpoint_uri}"
         vault write concourse/${concourse_team_name}/pcf-domain-name value="${pcf_domain_name}"
         vault write concourse/${concourse_team_name}/pcf-org-name value="${pcf_org_name}"
         vault write concourse/${concourse_team_name}/pcf-space-name value="${pcf_space_name}"
@@ -751,7 +751,7 @@ if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
     echo -e "${project_git_repo_private_key}" >> ${pipeline_credentials_file}
     echo "docker-username: ${docker_username}" >> ${pipeline_credentials_file}
     echo "docker-password: ${docker_password}" >> ${pipeline_credentials_file}
-    echo "pcf-api-endpoint: ${pcf_api_endpoint}" >> ${pipeline_credentials_file}
+    echo "pcf-api-endpoint-uri: ${pcf_api_endpoint_uri}" >> ${pipeline_credentials_file}
     echo "pcf-domain-name: ${pcf_domain_name}" >> ${pipeline_credentials_file}
     echo "pcf-org-name: ${pcf_org_name}" >> ${pipeline_credentials_file}
     echo "pcf-space-name: ${pcf_space_name}" >> ${pipeline_credentials_file}

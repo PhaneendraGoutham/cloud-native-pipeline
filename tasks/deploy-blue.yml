@@ -4,7 +4,7 @@ platform: linux
 params:
   env: dev
   pcf_app_name: No PCF App Name
-  pcf_api_endpoint: No PCF API Endpoint
+  pcf_api_endpoint_uri: No PCF API Endpoint URI
   pcf_domain_name: No PCF Domain Name
   pcf_org_name: No PCF Org Name
   pcf_space_name: No PCF Space Name

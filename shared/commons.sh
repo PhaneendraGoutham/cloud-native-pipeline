@@ -491,15 +491,15 @@ function pcf_get_green_app_name {
 }
 
 function pcf_login {
-    local pcf_api_endpoint="$1"
+    local pcf_api_endpoint_uri="$1"
     local pcf_org_name="$2"
     local pcf_space_name="$3"
     local pcf_username="$4"
     local pcf_password="$5"
 
-    echo "Logging into PCF instance '${pcf_api_endpoint}' for org '${pcf_org_name}' and space '${pcf_space_name}' via CF CLI..." &>2
+    echo "Logging into PCF instance '${pcf_api_endpoint_uri}' for org '${pcf_org_name}' and space '${pcf_space_name}' via CF CLI..." &>2
     cf login \
-        -a ${pcf_api_endpoint} \
+        -a ${pcf_api_endpoint_uri} \
         -o ${pcf_org_name} \
         -s ${pcf_space_name} \
         -u ${pcf_username} \

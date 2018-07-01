@@ -6,7 +6,7 @@ work_dir=$(dirname ${work_dir})
 source ${work_dir}/shared/commons.sh
 
 pcf_login \
-    ${pcf_api_endpoint} \
+    ${pcf_api_endpoint_uri} \
     ${pcf_org_name} \
     ${pcf_space_name} \
     ${pcf_username} \

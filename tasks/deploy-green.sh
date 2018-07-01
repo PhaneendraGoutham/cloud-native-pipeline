@@ -33,7 +33,7 @@ download_artifact \
     ${version}
 
 pcf_login \
-    ${pcf_api_endpoint} \
+    ${pcf_api_endpoint_uri} \
     ${pcf_org_name} \
     ${pcf_space_name} \
     ${pcf_username} \
