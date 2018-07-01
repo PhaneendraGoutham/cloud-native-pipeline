@@ -514,8 +514,16 @@ function pcf_login {
 function pcf_push {
     local pcf_app_name="$1"
     local pcf_app_host_name="$2"
-    local pcf_app_package="$3"
-    local pcf_manifest="$4"
+    local pcf_app_package=""
+    local pcf_manifest=""
+
+    if [ ! -z ${3} ]; then
+        pcf_app_package="$3"
+    fi
+
+    if [ ! -z ${4} ]; then
+        pcf_manifest="$4"
+    fi
 
     echo "Pushing app '${pcf_app_name}' to PCF..." &>2
     if [ -d "${pcf_app_package}" ] && [ -d "${pcf_manifest}" ]; then
