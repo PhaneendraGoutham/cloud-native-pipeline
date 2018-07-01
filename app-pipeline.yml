@@ -68,6 +68,7 @@ jobs:
       pcf_domain_name: ((pcf-domain-name))
   on_failure:
     do:
+    - get: cf-cli-image
     - task: smoke-tests-failed
       image: cf-cli-image
       file: shared-pipeline/tasks/rollback-green.yml
