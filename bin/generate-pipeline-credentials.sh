@@ -238,7 +238,7 @@ if [ "${has_pcf}" == "Y" ] ; then
     has_pcf_api_domain_org_space=`echo $(to_upper_case ${has_pcf_api_domain_org_space})`
 
     if [ "${has_pcf_api_domain_org_space}" == "N" ] ; then
-        echo -e "Enter value for ${cyan_color}'pcfApiEndpoint' (default: ${default_pcf_api_endpoint_uri})${no_color}, followed by [ENTER]:"
+        echo -e "Enter value for ${cyan_color}'pcfApiEndpointUri' (default: ${default_pcf_api_endpoint_uri})${no_color}, followed by [ENTER]:"
         read pcf_api_endpoint_uri
         echo ""
 
@@ -684,7 +684,7 @@ if [ "${pipeline_creds_storage_option}" == "V" ] ; then
         [ "${pcf_org_name}" != "" ] &&
         [ "${pcf_space_name}" != "" ] ; then
         echo -e "${cyan_color}Storing PCF shared API endpoint, domain, organization, and space into Vault for Concourse CI pipeline...${no_color}"
-        vault write concourse/${concourse_team_name}/pcf-api-endpoint value="${pcf_api_endpoint_uri}"
+        vault write concourse/${concourse_team_name}/pcf-api-endpoint-uri value="${pcf_api_endpoint_uri}"
         vault write concourse/${concourse_team_name}/pcf-domain-name value="${pcf_domain_name}"
         vault write concourse/${concourse_team_name}/pcf-org-name value="${pcf_org_name}"
         vault write concourse/${concourse_team_name}/pcf-space-name value="${pcf_space_name}"
