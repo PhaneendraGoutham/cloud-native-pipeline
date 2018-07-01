@@ -453,7 +453,7 @@ function pcf_deploy_blue {
     cf unmap-route ${pcf_app_name_green} ${pcf_domain_name} -n ${pcf_app_route_green}
 
     echo "Deleting route '${pcf_app_route_green}' of green app '${pcf_app_name_green}' in PCF..." &>2
-    cf delete-route ${pcf_domain_name} -n ${pcf_app_route_green}
+    cf delete-route ${pcf_domain_name} -n ${pcf_app_route_green} -f
 
     echo "Deleting current blue app '${pcf_app_name_blue}' in PCF..." &>2
     cf delete ${pcf_app_name_blue} -f
@@ -478,7 +478,7 @@ function pcf_deploy_green {
         cf delete ${pcf_app_name_blue} -f
 
         echo "Deleting route '${pcf_app_route_green}' of blue app '${pcf_app_name_blue}' in PCF..." &>2
-        cf delete-route ${pcf_domain_name} -n ${pcf_app_route_green}
+        cf delete-route ${pcf_domain_name} -n ${pcf_app_route_green} -f
     fi
 
     echo "Renaming current green app '${pcf_app_name_green}' to blue app '${pcf_app_name_blue}' in PCF..." &>2
