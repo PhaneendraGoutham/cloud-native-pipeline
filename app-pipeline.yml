@@ -29,7 +29,7 @@ jobs:
       artifact_repo_signing_key_passphrase: ((maven-central-gpg-key-passphrase))
       artifact_repo_signing_key_secret_keys: ((maven-central-gpg-secret-keys))
 
-- name: deploy-blue
+- name: deploy-green
   plan:
   - get: shared-pipeline
   - get: project-pipeline
@@ -37,15 +37,51 @@ jobs:
     trigger: true
     passed: [publish]
   - get: cf-cli-image
-  - task: deploy-blue
+  - task: deploy-green
     image: cf-cli-image
-    file: shared-pipeline/tasks/deploy-blue.yml
+    file: shared-pipeline/tasks/deploy-green.yml
     params:
       project_dir: ((project-dir))
       artifact_repo_uri: ((artifact-snapshots-repo-uri))
       artifact_repo_name: ((artifact-snapshots-repo-name))
       pcf_app_name: ((pcf-app-name))
       pcf_api_endpoint: ((pcf-api-endpoint))
+      pcf_domain_name: ((pcf-domain-name))
+      pcf_org_name: ((pcf-org-name))
+      pcf_space_name: ((pcf-space-name))
+      pcf_username: ((pcf-username))
+      pcf_password: ((pcf-password))
+
+- name: smoke-tests
+  plan:
+  - get: shared-pipeline
+  - get: project-pipeline
+  - get: source
+    trigger: true
+    passed: [deploy-green]
+  - get: cf-cli-image
+  - task: smoke-tests
+    image: cf-cli-image
+    file: shared-pipeline/tasks/smoke-tests.yml
+    params:
+      pcf_app_name: ((pcf-app-name))
+      pcf_domain_name: ((pcf-domain-name))
+
+- name: deploy-blue
+  plan:
+  - get: shared-pipeline
+  - get: project-pipeline
+  - get: source
+    trigger: true
+    passed: [smoke-tests]
+  - get: cf-cli-image
+  - task: deploy-blue
+    image: cf-cli-image
+    file: shared-pipeline/tasks/deploy-blue.yml
+    params:
+      pcf_app_name: ((pcf-app-name))
+      pcf_api_endpoint: ((pcf-api-endpoint))
+      pcf_domain_name: ((pcf-domain-name))
       pcf_org_name: ((pcf-org-name))
       pcf_space_name: ((pcf-space-name))
       pcf_username: ((pcf-username))
@@ -68,7 +104,7 @@ resources:
     branch: ((project-git-repo-branch))
     check: true
     paths: [ci/*]
-    ignore_paths: [gradle.properties, README.md]
+    ignore_paths: [README.md]
     private_key: ((project-git-repo-private-key))
 
 - name: source

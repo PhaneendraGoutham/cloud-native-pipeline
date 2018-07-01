@@ -4,11 +4,13 @@ workspace_dir=~/workspace
 
 concourse_instance_name=opengood-io
 concourse_uri=http://concourse.opengood.io:8080
-default_concourse_team_name=main
 
-default_pcf_api_endpoint=https://api.run.pivotal.io
+default_concourse_team_name=main
+default_pcf_api_endpoint_uri=https://api.run.pivotal.io
+default_pcf_domain_name=cfapps.io
 default_pcf_org_name=demo-gaig-org
 default_pcf_space_name=development
+default_pipeline_type=app
 
 github_api_uri=https://api.github.com
 github_org=opengood-io

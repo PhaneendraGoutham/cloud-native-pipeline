@@ -4,8 +4,9 @@ platform: linux
 params:
   env: dev
   pcf_app_name: No PCF App Name
-  health_check_endpoint_uri_template: https://%s.cfapps.io/actutator/health
-  version_check_endpoint_uri_template: https://%s.cfapps.io/actutator/info
+  pcf_domain_name: No PCF Domain Name
+  health_check_endpoint_uri_template: https://app.domain/actutator/health
+  version_check_endpoint_uri_template: https://app.domain/actutator/info
   smoke_tests_task_script: no-script.sh
 
 inputs:

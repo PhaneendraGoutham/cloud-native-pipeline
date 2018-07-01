@@ -2,6 +2,7 @@
 set -e -x -u
 
 work_dir=$(dirname $0)
+work_dir=$(dirname ${work_dir})
 source ${work_dir}/shared/commons.sh
 
 cd source
@@ -15,20 +16,20 @@ fi
 if [ -d "${project_dir}" ]; then
     cd ${project_dir}
 
-    configure_artifact_publishing \
-        "${artifact_repo_username}" \
-        "${artifact_repo_password}" \
-        "${artifact_repo_signing_key_id}" \
-        "${artifact_repo_signing_key_passphrase}" \
+    configure_artifact_repo_publishing \
+        ${artifact_repo_username} \
+        ${artifact_repo_password} \
+        ${artifact_repo_signing_key_id} \
+        ${artifact_repo_signing_key_passphrase} \
         "${artifact_repo_signing_key_secret_keys}"
 
     $(get_cd_up_path ${project_dir})gradlew uploadArchives
 else
-    configure_artifact_publishing \
-        "${artifact_repo_username}" \
-        "${artifact_repo_password}" \
-        "${artifact_repo_signing_key_id}" \
-        "${artifact_repo_signing_key_passphrase}" \
+    configure_artifact_repo_publishing \
+        ${artifact_repo_username} \
+        ${artifact_repo_password} \
+        ${artifact_repo_signing_key_id} \
+        ${artifact_repo_signing_key_passphrase} \
         "${artifact_repo_signing_key_secret_keys}"
 
     ./gradlew uploadArchives
