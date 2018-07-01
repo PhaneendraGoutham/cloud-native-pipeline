@@ -59,9 +59,9 @@ jobs:
   - get: source
     trigger: true
     passed: [deploy-green]
-  - get: cf-cli-image
+  - get: deploy-validation-image
   - task: smoke-tests
-    image: cf-cli-image
+    image: deploy-validation-image
     file: shared-pipeline/tasks/smoke-tests.yml
     params:
       pcf_app_name: ((pcf-app-name))
@@ -120,6 +120,11 @@ resources:
 #  type: docker-image
 #  source:
 #    repository: opengoodio/cloud-native-kotlin-java-jdk-8-gradle
+
+- name: deploy-validation-image
+  type: docker-image
+  source:
+    repository: opengoodio/cloud-native-deploy-validation
 
 - name: cf-cli-image
   type: docker-image

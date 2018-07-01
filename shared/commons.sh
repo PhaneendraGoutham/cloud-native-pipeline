@@ -351,7 +351,7 @@ function pcf_app_exists {
 
     local output=`cf apps`
 
-    if [ $(contains_string ${output} ${pcf_app_name}) == "true" ] ; then
+    if [ $(contains_string "${output}" ${pcf_app_name}) == "true" ] ; then
         echo true
     else
         echo false
@@ -541,7 +541,7 @@ function pcf_route_exists {
     local pcf_app_uri="${pcf_app_route_name}.${pcf_domain_name}"
     local output=`cf apps`
 
-    if [ $(contains_string ${output} ${pcf_app_uri}) == "true" ] ; then
+    if [ $(contains_string "${output}" ${pcf_app_uri}) == "true" ] ; then
         echo true
     else
         echo false
