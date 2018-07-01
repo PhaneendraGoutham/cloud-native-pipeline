@@ -441,9 +441,9 @@ function pcf_deploy_blue {
     local pcf_domain_name="$2"
 
     local pcf_app_name_blue=$(pcf_get_blue_app_name ${pcf_app_name})
-    local pcf_app_route_blue=${pcf_app_name}
+    local pcf_app_route_blue=$(pcf_get_blue_route_name ${pcf_app_name})
     local pcf_app_name_green=$(pcf_get_green_app_name ${pcf_app_name})
-    local pcf_app_route_green=${pcf_app_name}-deploy
+    local pcf_app_route_green=$(pcf_get_green_route_name ${pcf_app_name})
 
     echo "Mapping route '${pcf_app_route_green}' of green app '${pcf_app_name_green}' to route '${pcf_app_route_blue}' of blue app '${pcf_app_name_blue}' in PCF..." &>2
     cf map-route ${pcf_app_name_green} ${pcf_domain_name} -n ${pcf_app_route_blue}
@@ -466,9 +466,9 @@ function pcf_deploy_green {
     local pcf_domain_name="$2"
 
     local pcf_app_name_blue=$(pcf_get_blue_app_name ${pcf_app_name})
-    local pcf_app_route_blue=${pcf_app_name}
+    local pcf_app_route_blue=$(pcf_get_blue_route_name ${pcf_app_name})
     local pcf_app_name_green=$(pcf_get_green_app_name ${pcf_app_name})
-    local pcf_app_route_green=${pcf_app_name}-deploy
+    local pcf_app_route_green=$(pcf_get_green_route_name ${pcf_app_name})
 
     if [ $(pcf_app_exists ${pcf_app_route_blue} ${pcf_domain_name}) == "false" ] ; then
         echo "Deploying app '${pcf_app_name_green}' with route '${pcf_app_route_blue}' to PCF for first time..." &>2
@@ -482,10 +482,22 @@ function pcf_deploy_green {
     pcf_push ${pcf_app_name_green} ${pcf_app_route_green}
 }
 
+function pcf_get_blue_route_name {
+    local pcf_app_name="$1"
+    local pcf_app_route_blue=${pcf_app_name}
+    echo ${pcf_app_route_blue}
+}
+
 function pcf_get_blue_app_name {
     local pcf_app_name="$1"
     local pcf_app_name_blue=${pcf_app_name}-blue
     echo ${pcf_app_name_blue}
+}
+
+function pcf_get_green_route_name {
+    local pcf_app_name="$1"
+    local pcf_app_route_green=${pcf_app_name}-deploy
+    echo ${pcf_app_route_green}
 }
 
 function pcf_get_green_app_name {

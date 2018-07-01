@@ -7,14 +7,14 @@ source ${work_dir}/shared/commons.sh
 
 cd source
 
-pcf_app_name_blue=$(pcf_get_blue_app_name ${pcf_app_name})
+pcf_app_route_green=$(pcf_get_green_route_name ${pcf_app_name})
 
 health_check_status=$(exec_smoke_test \
     "health" \
     ${health_check_endpoint_uri_template} \
     ".status" \
     "UP" \
-    ${pcf_app_name_blue} \
+    ${pcf_app_route_green} \
     ${pcf_domain_name})
 
 if [ "${health_check_status}" == "failed" ] ; then
@@ -27,7 +27,7 @@ version_check_status=$(exec_smoke_test \
     ${version_check_endpoint_uri_template} \
     ".build.version" \
     ${version} \
-    ${pcf_app_name_blue} \
+    ${pcf_app_route_green} \
     ${pcf_domain_name})
 
 if [ "${version_check_status}" == "failed" ] ; then
