@@ -43,7 +43,7 @@ pcf_set_manifest_properties \
     ${pcf_app_name} \
     ${artifact_id}
 
-create_pcf_services_task_script_path=$(get_cd_up_path ${create_pcf_services_task_script})
+create_pcf_services_task_script_path="$(get_cd_up_path ${create_pcf_services_task_script})${create_pcf_services_task_script}"
 if [ -d "${create_pcf_services_task_script_path}" ]; then
     source ${create_pcf_services_task_script_path}
 fi

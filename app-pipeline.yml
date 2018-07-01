@@ -1,33 +1,33 @@
 jobs:
-- name: run-tests
-  plan:
-  - get: shared-pipeline
-  - get: project-pipeline
-  - get: source
-    trigger: true
-  - get: cloud-native-image
-  - task: run-all-tests
-    image: cloud-native-image
-    file: shared-pipeline/tasks/run-tests.yml
-
-- name: publish
-  plan:
-  - get: shared-pipeline
-  - get: project-pipeline
-  - get: source
-    trigger: true
-    passed: [run-tests]
-  - get: cloud-native-image
-  - task: publish
-    image: cloud-native-image
-    file: shared-pipeline/tasks/publish.yml
-    params:
-      project_dir: ((project-dir))
-      artifact_repo_username: ((maven-central-username))
-      artifact_repo_password: ((maven-central-password))
-      artifact_repo_signing_key_id: ((maven-central-gpg-key-id))
-      artifact_repo_signing_key_passphrase: ((maven-central-gpg-key-passphrase))
-      artifact_repo_signing_key_secret_keys: ((maven-central-gpg-secret-keys))
+#- name: run-tests
+#  plan:
+#  - get: shared-pipeline
+#  - get: project-pipeline
+#  - get: source
+#    trigger: true
+#  - get: cloud-native-image
+#  - task: run-all-tests
+#    image: cloud-native-image
+#    file: shared-pipeline/tasks/run-tests.yml
+#
+#- name: publish
+#  plan:
+#  - get: shared-pipeline
+#  - get: project-pipeline
+#  - get: source
+#    trigger: true
+#    passed: [run-tests]
+#  - get: cloud-native-image
+#  - task: publish
+#    image: cloud-native-image
+#    file: shared-pipeline/tasks/publish.yml
+#    params:
+#      project_dir: ((project-dir))
+#      artifact_repo_username: ((maven-central-username))
+#      artifact_repo_password: ((maven-central-password))
+#      artifact_repo_signing_key_id: ((maven-central-gpg-key-id))
+#      artifact_repo_signing_key_passphrase: ((maven-central-gpg-key-passphrase))
+#      artifact_repo_signing_key_secret_keys: ((maven-central-gpg-secret-keys))
 
 - name: deploy-green
   plan:
@@ -35,7 +35,7 @@ jobs:
   - get: project-pipeline
   - get: source
     trigger: true
-    passed: [publish]
+#    passed: [publish]
   - get: cf-cli-image
   - task: deploy-green
     image: cf-cli-image
@@ -116,10 +116,10 @@ resources:
     ignore_paths: [ci/*, gradle.properties, README.md]
     private_key: ((project-git-repo-private-key))
 
-- name: cloud-native-image
-  type: docker-image
-  source:
-    repository: opengoodio/cloud-native-kotlin-java-jdk-8-gradle
+#- name: cloud-native-image
+#  type: docker-image
+#  source:
+#    repository: opengoodio/cloud-native-kotlin-java-jdk-8-gradle
 
 - name: cf-cli-image
   type: docker-image
