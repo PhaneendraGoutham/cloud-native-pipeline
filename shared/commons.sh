@@ -514,27 +514,9 @@ function pcf_login {
 function pcf_push {
     local pcf_app_name="$1"
     local pcf_app_host_name="$2"
-    local pcf_app_package=""
-    local pcf_manifest=""
-
-    if [ ! -z ${3} ]; then
-        pcf_app_package="$3"
-    fi
-
-    if [ ! -z ${4} ]; then
-        pcf_manifest="$4"
-    fi
 
     echo "Pushing app '${pcf_app_name}' to PCF..." &>2
-    if [ -d "${pcf_app_package}" ] && [ -d "${pcf_manifest}" ]; then
-        cf push ${pcf_app_name} -n ${pcf_app_host_name} -p "${pcf_app_package}" -f "${pcf_manifest}"
-    elif [ -d "${pcf_app_package}" ]; then
-        cf push ${pcf_app_name} -n ${pcf_app_host_name} -p "${pcf_app_package}"
-    elif [ -d "${pcf_manifest}" ]; then
-        cf push ${pcf_app_name} -n ${pcf_app_host_name} -f "${pcf_manifest}"
-    else
-        cf push ${pcf_app_name} -n ${pcf_app_host_name}
-    fi
+    cf push ${pcf_app_name} -n ${pcf_app_host_name}
 }
 
 function pcf_set_manifest_properties {
