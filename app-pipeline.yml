@@ -29,28 +29,28 @@ jobs:
 #      artifact_repo_signing_key_passphrase: ((maven-central-gpg-key-passphrase))
 #      artifact_repo_signing_key_secret_keys: ((maven-central-gpg-secret-keys))
 
-- name: deploy-green
-  plan:
-  - get: shared-pipeline
-  - get: project-pipeline
-  - get: source
-    trigger: true
+#- name: deploy-green
+#  plan:
+#  - get: shared-pipeline
+#  - get: project-pipeline
+#  - get: source
+#    trigger: true
 #    passed: [publish]
-  - get: cf-cli-image
-  - task: deploy-green
-    image: cf-cli-image
-    file: shared-pipeline/tasks/deploy-green.yml
-    params:
-      project_dir: ((project-dir))
-      artifact_repo_uri: ((artifact-snapshots-repo-uri))
-      artifact_repo_name: ((artifact-snapshots-repo-name))
-      pcf_app_name: ((pcf-app-name))
-      pcf_api_endpoint_uri: ((pcf-api-endpoint-uri))
-      pcf_domain_name: ((pcf-domain-name))
-      pcf_org_name: ((pcf-org-name))
-      pcf_space_name: ((pcf-space-name))
-      pcf_username: ((pcf-username))
-      pcf_password: ((pcf-password))
+#  - get: cf-cli-image
+#  - task: deploy-green
+#    image: cf-cli-image
+#    file: shared-pipeline/tasks/deploy-green.yml
+#    params:
+#      project_dir: ((project-dir))
+#      artifact_repo_uri: ((artifact-snapshots-repo-uri))
+#      artifact_repo_name: ((artifact-snapshots-repo-name))
+#      pcf_app_name: ((pcf-app-name))
+#      pcf_api_endpoint_uri: ((pcf-api-endpoint-uri))
+#      pcf_domain_name: ((pcf-domain-name))
+#      pcf_org_name: ((pcf-org-name))
+#      pcf_space_name: ((pcf-space-name))
+#      pcf_username: ((pcf-username))
+#      pcf_password: ((pcf-password))
 
 - name: smoke-tests
   plan:
@@ -58,7 +58,7 @@ jobs:
   - get: project-pipeline
   - get: source
     trigger: true
-    passed: [deploy-green]
+#    passed: [deploy-green]
   - get: deploy-validation-image
   - task: smoke-tests
     image: deploy-validation-image
