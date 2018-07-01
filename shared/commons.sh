@@ -475,7 +475,7 @@ function pcf_deploy_green {
 
     if [ $(pcf_app_exists ${pcf_app_name_blue}) == "true" ] ; then
         echo "Deleting blue app '${pcf_app_name_blue}' from PCF..." &>2
-        cf delete ${pcf_app_name_blue}
+        cf delete ${pcf_app_name_blue} -f
     fi
 
     echo "Renaming current green app '${pcf_app_name_green}' to blue app '${pcf_app_name_blue}' in PCF..." &>2
