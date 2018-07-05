@@ -15,5 +15,8 @@ build/
 out/
 !gradle/wrapper/gradle-wrapper.jar
 
+### Git ###
+.git-together
+
 ### Credentials ###
 credentials.yml
