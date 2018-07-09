@@ -1,12 +1,11 @@
 # OpenGood.io OSS Cloud-Native Pipeline
 
-Provides a common, centralized Concourse CI pipeline for all OpenGood.io OSS cloud-native project types
+Centralized Concourse CI pipelines for all OpenGood.io OSS cloud-native project types
 
 ## Pipeline Generation
 
-To make creating a pipeline as easy as possible, this repo provides common, centralized Concourse CI pipelines to
-generate a pipeline based on a project type. In addition, a script is provided to automate the process of generating a
-pipeline.
+To make creating a pipeline as easy as possible, this repo provides centralized Concourse CI pipelines to generate a
+pipeline based on a project type. In addition, a script is provided to automate the process of generating a pipeline.
 
 ### Supported Pipeline Project Types
 
@@ -32,9 +31,9 @@ To generate a pipeline, run:
 bin/generate-pipeline.sh
 ```
 
-One will be prompted by the script to enter values for the pipeline:
+One will be prompted by the script to enter values for the pipeline parameters:
 
-| Value                   | Description                                       | Example                  |
+| Parameter               | Description                                       | Example                  |
 |:------------------------|:------------------------------------------------- |:------------------------ |
 | type                    | Pipeline project type (see supported types above) | app                      |
 | name                    | Pipeline project name                             | my-project               |
@@ -42,98 +41,76 @@ One will be prompted by the script to enter values for the pipeline:
 | username                | Concourse CI username                             | username                 |
 | password                | Concourse CI password                             | password                 |
 
+The script performs the following actions:
 
-TODO: Complete documentation
+1. Captures all required input from a user to generate a pipeline
+1. Combines shared and project pipeline parameters files
+1. Authenticates with Concourse CI instance
+1. Generates pipeline and sets its configuration in Concourse CI
 
+## Pipeline Resource Credentials
+
+Generated pipelines require credentials to access resources, such as GitHub, Docker Hub, Maven Central, etc. A script is
+provided that automates the storing of credentials for resources used in generated pipelines.
+
+### Supported Pipeline Credential Storage Types
+
+| Project Type | Supported ? |
+|:------------ |:----------- |
+| Vault        | Yes         |
+| YAML         | Yes         |
+
+### Store Pipeline Resource Credentials
+
+To store pipeline resource credentials, run:
+
+```bash
+bin/store-pipeline-credentials.sh
+```
+
+One will be prompted by the script to conditionally enter value(s) for credentials parameters:
+
+| Parameter                          | Description                             | Example                      |
+|:---------------------------------- |:--------------------------------------- |:---------------------------- |
+| name                               | Pipeline project name                   | my-project                   |
+| concourseTeamName                  | Concourse CI team name                  | my-team                      |
+| githubUser                         | GitHub username                         | github-username              |
+| githubToken                        | GitHub token                            | github-token                 |
+| githubSharedPipelineEmail          | GitHub shared pipeline email            | user@domain.com              |
+| githubSharedPipelineRepo           | GitHub shared pipeline repo             | shared-pipeline              |
+| githubSharedPipelineRepoBranch     | GitHub shared pipeline repo branch      | master                       |
+| githubProjectEmail                 | GitHub project email                    | user@domain.com              |
+| githubProjectRepo                  | GitHub project repo                     | my-project                   |
+| githubProjectRepoBranch            | GitHub project repo branch              | master                       |
+| dockerUserName                     | Docker username                         | docker-user                  |
+| dockerPassword                     | Docker password                         | docker-password              |
+| pctApiEndpointUri                  | PCF API endpoint URI                    | https://api.run.pivotal.io   |
+| pcfDomain                          | PCF domain name                         | cfapps.io                    |
+| pcfOrg                             | PCF organization                        | my-org                       |
+| pcfSpace                           | PCF space                               | my-space                     |
+| pcfUserName                        | PCF username                            | pcf-user                     |
+| pcfPassword                        | PCF password                            | pcf-password                 |
+| dbUserName                         | Database username                       | db-user                      |
+| dbPassword                         | Database password                       | db-password                  |
+| mavenCentralUserName               | Maven Central username                  | maven-central-username       |
+| mavenCentralPassword               | Maven Central password                  | maven-central-password       |
+| mavenCentralGpgKeyRingName         | Maven Central GPG key ring name         | my-key-ring                  |
+| mavenCentralGpgKeyRingComment      | Maven Central GPG key ring comment      | My GPG Key Ring              |
+| mavenCentralGpgKeyRingEmail        | Maven Central GPG key ring email        | user@domain.com              |
+| mavenCentralGpgKeyRingPassphrase   | Maven Central GPG key ring passphrase   | my-key-ring-passphrase       |
 
 The script performs the following actions:
 
-1. Captures all required input from a user to generate a Gradle project
-1. Initializes a blank local Git repo
-1. Generates the Gradle project
-1. Copies the Gradle project files to the local Git repo
-1. Adds and commits the Gradle project files to the local Git repo
-1. Pushes the initial Git commit to its remote repo origin in GitHub
-1. Cleans up local temp files used for generating the Gradle project
-
-## CI Credentials Generation
-
-If a generated Gradle project requires a Concourse CI pipeline, credentials will be required to access resources, such
-as GitHub, Docker Hub, Maven Central, etc.
-
-A CI credentials generation script is provided that automates generating credentials for Concourse CI pipelines.
-
-### Generate CI Credentials
-
-To generate credentials for a Concourse CI pipeline defined in a Gradle project, run:
-
-```bash
-bin/generate-ci-credentials.sh
-```
-
-One will be prompted by the script to enter a value for the name of the Gradle project, and credentials values:
-
-| Value                       | Description                 | Example               |
-|:--------------------------- |:--------------------------- |:--------------------- |
-| name                        | Gradle project name         | my-project            |
-| dockerUsername              | Docker username             | docker-user           |
-| dockerPassword              | Docker password             | docker-password       |
-| pcfUsername                 | PCF username                | pcf-user              |
-| pcfPassword                 | PCF password                | pcf-password          |
-| dbUsername                  | Database username           | db-user               |
-| dbPassword                  | Database password           | db-password           |
-| githubEmail                 | GitHub email address        | user@domain.com       |
-
-
-The script will generate a `credentials.yml` file in the `ci` directory of the Gradle project.
-
-**Note:** This file is automatically ignored by the `.gitignore` file.
-
-**DO NOT COMMIT THIS FILE AS IT CONTAINS SENSITIVE INFORMATION!!!**
-
-### Create GitHub Deploy Key
-
-The script prompts one for a GitHub email address and generates a SSH private/public key pair. In order to read/write
-from GitHub, one must create a deploy key in the repository in GitHub. A deploy key is created using the public key
-generated by the script. The public key is automatically copied to the clipboard.
-
-For specific instructions on creating a GitHub deploy key, see [Creating GitHub Deploy Key](https://developer.github.com/v3/guides/managing-deploy-keys/#deploy-keys "Creating GitHub Deploy Key").
-
-## Gradle Project Sync
-
-In order to keep existing Gradle projects in sync with changes to the Gradle archetype, a sync script is provided that
-automates syncing changes from the archetype with a select existing Gradle project.
-
-### Sync Gradle Project
-
-To sync a Gradle project using the Gradle archetype, run:
-
-```bash
-bin/sync-gradle-project.sh
-```
-
-One will be prompted by the script to enter a value for the name of the Gradle project.
-
-Once the sync is complete, one will need to review any changes and commit them to the local Git repo and push them to
-its remote origin in GitHub.
-
-## References
-
-* [Gradle Archetype GitHub Repo](https://github.com/orctom/gradle-archetype-plugin)
-
-## Development
-
-### Gradle
-
-#### Dependency Updates
-
-To determine if any dependencies have updates, run:
-
-```bash
-./gradlew dependencyUpdates
-```
+1. Captures all required input from a user to store credentials for pipeline resources
+1. Prompts for credential storage type
+1. Outputs all credentials information to be stored
+1. If specified, generates SSH private/public keys for GitHub repo(s) deploy key(s)
+1. If specified, generates GPG key ring(s) and secret keys for Maven Central artifact repo publishing
+1. If Vault specified, stores all specified credentials information into Vault
+1. If YAML specified, stores all specified credentials information into YAML credentials file
+1. If specified, creates GitHub repo(s) deploy key(s) in GitHub for repo(s) via GitHub API
 
 ## Disclaimer
 
-`cloud-native-project-gradle-archetype` is a project from the OpenGood.io library of OSS projects, frameworks, and
+`cloud-native-pipeline` is a project from the OpenGood.io library of OSS projects, frameworks, and
 solutions.

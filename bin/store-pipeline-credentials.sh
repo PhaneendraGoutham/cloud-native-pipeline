@@ -7,7 +7,7 @@ source ${work_dir}/shared/commons.sh
 source ${work_dir}/config/properties.sh
 
 echo -e "${cyan_color}*************************************************************************${no_color}"
-echo -e "${cyan_color}OpenGood.io Cloud-Native App Concourse CI Pipeline Credentials Generator${no_color}"
+echo -e "${cyan_color}OpenGood.io Cloud-Native Pipeline Resource Credentials Storage${no_color}"
 echo -e "${cyan_color}*************************************************************************${no_color}"
 echo ""
 
@@ -470,15 +470,15 @@ else
 fi
 
 echo -e "How do you want to ${yellow_color}store your project's pipeline credentials${no_color}?"
-echo -e "Enter ${cyan_color}'CY'${no_color} for 'Credentials YAML' and ${cyan_color}'V'${no_color} for Vault or leave blank, followed by [ENTER]:"
-read pipeline_creds_storage_option
+echo -e "Enter ${cyan_color}'CY'${no_color} for 'Credentials YAML' and ${cyan_color}'V'${no_color} for 'Vault' or leave blank, followed by [ENTER]:"
+read pipeline_creds_storage_type
 echo ""
 
-pipeline_creds_storage_option=$(to_lower_case ${pipeline_creds_storage_option})
-pipeline_creds_storage_option=$(remove_special_chars ${pipeline_creds_storage_option})
+pipeline_creds_storage_type=$(to_lower_case ${pipeline_creds_storage_type})
+pipeline_creds_storage_type=$(remove_special_chars ${pipeline_creds_storage_type})
 
-if [ "${pipeline_creds_storage_option}" != "CY" ] && [ "${pipeline_creds_storage_option}" != "V" ] ; then
-    pipeline_creds_storage_option="V"
+if [ "${pipeline_creds_storage_type}" != "CY" ] && [ "${pipeline_creds_storage_type}" != "V" ] ; then
+    pipeline_creds_storage_type="V"
 fi
 
 echo -e "${cyan_color}===================================================================================${no_color}"
@@ -489,7 +489,7 @@ echo -e "${cyan_color}==========================================================
 echo -e "${cyan_color}Pipeline${no_color}"
 echo -e "${cyan_color}===================================================================================${no_color}"
 echo -e "${cyan_color}      Pipeline name: ${pipeline_name}${no_color}"
-echo -e "${cyan_color}Credentials storage: $(get_pipeline_creds_storage ${pipeline_creds_storage_option})${no_color}"
+echo -e "${cyan_color}Credentials storage: $(get_pipeline_creds_storage ${pipeline_creds_storage_type})${no_color}"
 echo ""
 echo -e "${cyan_color}===================================================================================${no_color}"
 echo -e "${cyan_color}Concourse CI${no_color}"
@@ -632,7 +632,7 @@ if [ "${maven_central_gpg_key_ring_name}" != "" ] &&
     echo ""
 fi
 
-if [ "${pipeline_creds_storage_option}" == "V" ] ; then
+if [ "${pipeline_creds_storage_type}" == "V" ] ; then
     if [ "${github_user}" != "" ] && [ "${github_token}" != "" ] ; then
         echo -e "${cyan_color}Storing GitHub credentials into Vault for Concourse CI pipeline...${no_color}"
         vault write concourse/${concourse_team_name}/github-user value="${github_user}"
@@ -734,7 +734,7 @@ if [ "${pipeline_creds_storage_option}" == "V" ] ; then
     fi
 fi
 
-if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
+if [ "${pipeline_creds_storage_type}" == "CY" ] ; then
     echo -e "${cyan_color}Generating pipeline credentials file '${pipeline_credentials_file}'...${no_color}"
 
     cd ${project_dir}/ci

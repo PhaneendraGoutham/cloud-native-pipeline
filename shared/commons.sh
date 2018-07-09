@@ -316,6 +316,16 @@ function get_json_content_type {
     echo ${content_type}
 }
 
+function get_pipeline_creds_storage {
+    local pipeline_creds_storage_option="$1"
+
+    if [ "${pipeline_creds_storage_option}" == "CY" ] ; then
+        echo "Credentials YAML"
+    else
+        echo "Vault"
+    fi
+}
+
 function get_project_artifact_id {
     local artifact_id=`awk '/name/{print $NF; exit}' build.gradle | sed s/\'//g`
     echo ${artifact_id}
