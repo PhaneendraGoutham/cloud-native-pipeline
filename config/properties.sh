@@ -33,7 +33,7 @@ pipeline_config_file=pipeline.yml
 pipeline_credentials_file=credentials.yml
 pipeline_parameters_file=parameters.yml
 
-shared_pipeline_project=cloud-native-app-pipeline
+shared_pipeline_project=cloud-native-pipeline
 shared_pipeline_project_dir=${workspace_dir}/${shared_pipeline_project}
 
 app_pipeline_config_file=${shared_pipeline_project_dir}/app-pipeline.yml
