@@ -7,7 +7,7 @@ source ${work_dir}/shared/commons.sh
 source ${work_dir}/config/properties.sh
 
 echo -e "${cyan_color}*************************************************************************${no_color}"
-echo -e "${cyan_color}OpenGood.io Cloud-Native App Concourse CI Pipeline Generator${no_color}"
+echo -e "${cyan_color}OpenGood.io Cloud-Native Concourse CI Pipeline Generator${no_color}"
 echo -e "${cyan_color}*************************************************************************${no_color}"
 echo ""
 
